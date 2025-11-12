@@ -1,0 +1,47 @@
+body {
+    width: display-width;
+    margin: 0;
+    display: flex;
+    background-color: #ECE4C0;
+}
+
+header {
+    width: 100%;
+    margin: 0;
+    background-color: #254C69;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.menu_container {
+
+    display: flex;
+    justify-content: space-evenly;
+    width: 340px;
+
+    button {
+        background-color: rgba(155, 189, 162, 0);
+        border: none;
+    }
+
+    img {
+        height: 30px;
+    }
+}
+
+.logo {
+    height: 60px;
+    width: auto;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-left: 20px;
+
+    h1 {
+        margin: 0;
+        color: #ECE4C0;
+        font-family: "Jua", sans-serif;
+    }
+}
