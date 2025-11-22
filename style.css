@@ -9,10 +9,11 @@ footer {
     width: 100%;
     margin: 0;
     background-color: #254C69;
-    height: 60px;
+    height: 90px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
 
     button {
         width: 60px;
@@ -44,6 +45,10 @@ button {
     align-items: center;
 }
 
+a {
+    text-decoration: none;
+}
+
 .logo {
     height: 60px;
     width: auto;
@@ -60,28 +65,25 @@ button {
 }
 
 .start {
-    background-color: rgba(179, 196, 162, 0.67);
+    background-color: rgba(210, 215, 169, 1);
     border-radius: 20px;
     height: 190px;
     width: 980px;
-    padding: 40px;
+    padding: 20px;
     color: #162f42;
-}
-
-.catalog {
-    margin: 30px 10px;
-    height: 200px;
-    width: 1350px;
 }
 
 .catalog_section {
     border-radius: 0 0 20px 20px;
     background-color: rgba(155, 189, 162, 1);
     height: 200px;
-    width: 1300px;
+    width: auto;
 }
 
 .catalog {
+    margin: 30px 10px;
+    height: 200px;
+    width: auto;
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -91,5 +93,20 @@ button {
             width: 40px;
             height: 40px;
         }
+    }
+}
+
+.post_menu {
+    background-color: rgba(71, 123, 145, 1);
+    width: 1980px;
+    display: flex;
+    justify-content: center;
+
+    button {
+        width: auto;
+        height: 40px;
+        color: #ECE4C0;
+        font-weight: bold;
+        margin: 0 20px;
     }
 }
