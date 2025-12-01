@@ -1,0 +1,119 @@
+.menu_container {
+
+    display: flex;
+    justify-content: space-evenly;
+    width: 340px;
+    margin-right: 100px;
+
+    img {
+        height: 30px;
+    }
+}
+
+.main {
+    margin: 30px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+a {
+    text-decoration: none;
+}
+
+.logo {
+    height: 60px;
+    width: auto;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-left: 100px;
+
+    h1 {
+        margin: 0;
+        color: #ECE4C0;
+    }
+}
+
+.start {
+    background-color: rgba(210, 215, 169, 1);
+    border-radius: 20px;
+    height: 190px;
+    width: 980px;
+    padding: 20px;
+    color: #162f42;
+}
+
+.post_menu {
+    background-color: rgba(71, 123, 145, 1);
+    width: 1980px;
+    display: flex;
+    justify-content: center;
+
+    button {
+        width: auto;
+        height: 40px;
+        color: #ECE4C0;
+        font-weight: bold;
+        margin: 0 20px;
+    }
+}
+
+.search-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 800px;
+}
+
+.search-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 2;
+    flex-shrink: 0;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgb(71, 123, 145);
+    border-radius: 25px;
+    padding: 6px 12px;
+    width: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: width 0.3s ease, opacity 0.3s ease;
+    overflow: hidden;
+    height: 24px;
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    background: none;
+    color: rgb(210, 215, 169);
+    flex: 1;
+    min-width: 0;
+    padding-right: 10px;
+}
+
+.search-box.open {
+    opacity: 1;
+    pointer-events: auto;
+    width: 100%;
+}
+
+.close-search {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: rgb(210, 215, 169);
+    margin-left: 5px;
+    flex-shrink: 0;
+    height: auto;
+    width: auto;
+    font-size: 50px;
+}
