@@ -6,12 +6,15 @@ ul {
     padding: 0;
 }
 
+.main-page {
+    width: 99%;
+}
+
 li {
     img {
-        height: 200px;
+        width: 60%;
     }
 
-    padding: 15px;
     font-size: 25px;
     display: flex;
     flex-direction: column;
@@ -21,40 +24,23 @@ li {
 .catalog_section {
     border-radius: 0 0 20px 20px;
     background-color: rgba(155, 189, 162, 1);
-    width: auto;
-    padding: 20px;
-    margin: 0 60px;
     flex: 1;
 }
 
 .catalog {
+    margin-top: 30px;
     position: relative;
-    width: auto;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-}
 
-.prev_button,
-.next_button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-}
+    button {
+        padding: 20px;
 
-.prev_button {
-    left: 0;
-}
-
-.next_button {
-    right: 0;
-}
-
-button img {
-    width: 40px;
-    height: 40px;
+        img {
+            width: 35px;
+            height: 35px;
+        }
+    }
 }

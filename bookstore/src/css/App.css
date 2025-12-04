@@ -9,14 +9,15 @@ body {
   margin: 0;
   background-color: #ECE4C0;
   font-family: 'MyFont', sans-serif;
+  width: 100vw;
 }
 
 header,
 footer {
+  position: relative;
   width: 100%;
   margin: 0;
   background-color: #254C69;
-  height: 90px;
   display: flex;
   align-items: center;
   justify-content: space-between;

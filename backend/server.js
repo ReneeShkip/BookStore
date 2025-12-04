@@ -8,39 +8,67 @@ app.use(cors({
     origin: "http://localhost:5173"
 }));
 
-const db = mysql.createConnection({
+const db = mysql.createPool({
     host: "localhost",
     user: "root",
     password: "root1",
-    database: "bookstore"
+    database: "bookstore",
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-db.connect(err => {
-    if (err) console.error("DB connection error:", err);
-    else console.log("DB connected");
+// Ендпоінт для отримання всіх категорій
+app.get("/categories", (req, res) => {
+    const query = "SELECT id, name, view_name FROM categories ORDER BY name";
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("SQL error:", err);
+            return res.status(500).json({ error: "Failed to fetch categories" });
+        }
+        res.json(results);
+    });
 });
 
+// Ендпоінт для отримання книг за категорією
 app.get("/books", (req, res) => {
+    const categoryIdentifier = req.query.category;
     const limit = parseInt(req.query.limit) || 7;
     const offset = parseInt(req.query.offset) || 0;
 
-    const sort = req.query.sort || "price";
-    const order = req.query.order || "DESC";
+    if (!categoryIdentifier) {
+        return res.status(400).json({ error: "Category is required" });
+    }
 
-    const allowedSort = ["id", "price", "title"];
-    const allowedOrder = ["ASC", "DESC"];
+    // Шукаємо по ID або по назві
+    const getCategoryQuery = `
+        SELECT view_name, name 
+        FROM categories 
+        WHERE id = ? OR name = ? OR view_name = ?
+    `;
 
-    const sortField = allowedSort.includes(sort) ? sort : "id";
-    const orderDir = allowedOrder.includes(order) ? order : "DESC";
-
-    const query = `SELECT * FROM ukr_mod_books ORDER BY ${sortField} ${orderDir} LIMIT ? OFFSET ?`;
-
-    db.query(query, [limit, offset], (err, results) => {
+    db.query(getCategoryQuery, [categoryIdentifier, categoryIdentifier, categoryIdentifier], (err, categoryResults) => {
         if (err) {
-            console.log("SQL error:", err);
-            return res.status(500).json({ error: err });
+            console.error("SQL error:", err);
+            return res.status(500).json({ error: "Database error" });
         }
-        res.json(results);
+
+        if (categoryResults.length === 0) {
+            return res.status(404).json({ error: "Category not found" });
+        }
+
+        const viewName = categoryResults[0].view_name;
+
+        const query = `SELECT * FROM ${mysql.escapeId(viewName)} ORDER BY price DESC LIMIT ? OFFSET ?`;
+
+        db.query(query, [limit, offset], (err, results) => {
+            if (err) {
+                console.error("SQL error:", err);
+                return res.status(500).json({ error: "Failed to fetch books" });
+            }
+            res.json(results);
+        });
     });
 });
 
