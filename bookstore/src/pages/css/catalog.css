@@ -1,9 +1,27 @@
+.category {
+    background: linear-gradient(to right, #254C69, rgba(155, 189, 162, 1));
+    color: #ECE4C0;
+    padding: 0 15px;
+    font-size: 25px;
+    margin-bottom: 20px;
+}
+
 ul {
     display: flex;
     justify-content: space-evenly;
     margin: 0;
     width: auto;
     padding: 0;
+}
+
+.paper {
+    border-radius: 0 10px 10px 0;
+    border: #254C69 5px solid;
+}
+
+.electro {
+    border-radius: 20px;
+    border: rgba(210, 215, 169, 1) 7px solid;
 }
 
 .main-page {

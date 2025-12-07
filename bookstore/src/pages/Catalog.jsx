@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import '../css/style.css';
-import '../css/App.css';
-import '../css/catalog.css';
-import BooksList from './booklist';
+import './css/style.css';
+import './css/catalog.css';
+import BooksList from '../components/Booklist';
 
-function Catalog() {
+export default function Catalog() {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -47,5 +46,3 @@ function Catalog() {
         </div>
     );
 }
-
-export default Catalog;

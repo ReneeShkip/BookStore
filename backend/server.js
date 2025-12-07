@@ -5,7 +5,7 @@ const mysql = require("mysql2");
 const app = express();
 
 app.use(cors({
-    origin: "http://localhost:5173"
+    origin: "http://localhost:5175"
 }));
 
 const db = mysql.createPool({
@@ -18,7 +18,6 @@ const db = mysql.createPool({
     queueLimit: 0
 });
 
-// Ендпоінт для отримання всіх категорій
 app.get("/categories", (req, res) => {
     const query = "SELECT id, name, view_name FROM categories ORDER BY name";
 
@@ -31,7 +30,6 @@ app.get("/categories", (req, res) => {
     });
 });
 
-// Ендпоінт для отримання книг за категорією
 app.get("/books", (req, res) => {
     const categoryIdentifier = req.query.category;
     const limit = parseInt(req.query.limit) || 7;
@@ -41,7 +39,6 @@ app.get("/books", (req, res) => {
         return res.status(400).json({ error: "Category is required" });
     }
 
-    // Шукаємо по ID або по назві
     const getCategoryQuery = `
         SELECT view_name, name 
         FROM categories 
@@ -65,11 +62,24 @@ app.get("/books", (req, res) => {
         db.query(query, [limit, offset], (err, results) => {
             if (err) {
                 console.error("SQL error:", err);
-                return res.status(500).json({ error: "Failed to fetch books" });
+                return;
             }
             res.json(results);
         });
     });
 });
+
+app.get("/authors", (req, res) => {
+    const query = "SELECT id, first_name, last_name, photo FROM authors;";
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("SQL error:", err);
+            return res.status(500).json({ error: "Failed to fetch authors" });
+        }
+        res.json(results);
+    });
+});
+
 
 app.listen(5000, () => console.log("Server running on port 5000"));

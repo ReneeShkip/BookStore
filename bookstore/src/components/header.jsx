@@ -1,77 +1,131 @@
+import React, { useEffect, useState, useRef } from "react";
+import { NavLink, Link } from "react-router-dom";
+import Log_in from "./Log_in";
 
-import { useEffect, useState } from "react";
-import Personal from "./personal";
+export default function Header() {
 
-function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [isAuth, setIsAuth] = useState(false);
+    const [searchOpen, setSearchOpen] = useState(false);
+
+    const searchBoxRef = useRef(null);
+    const searchToggleRef = useRef(null);
+    const searchInputRef = useRef(null);
+
+    const menuRef = useRef(null);
+    const btnRef = useRef(null);
+
+    const handleLogin = () => { setIsAuth(true); setMenuOpen(false); };
+    const handleLogout = () => { setIsAuth(false); setMenuOpen(false); };
     const toggleMenu = () => setMenuOpen(prev => !prev);
-    const handleLogout = () => {
-        setIsAuth(false);
-        setMenuOpen(false);
-    };
+
     useEffect(() => {
-        const toggle = document.querySelector(".search-toggle");
-        const box = document.querySelector(".search-box");
-        const closeBtn = document.querySelector(".close-search");
-        const input = document.getElementById("search");
+        if (!searchOpen) return;
 
-        toggle.addEventListener("click", () => {
-            box.classList.add("open");
-            box.querySelector("input").focus();
-        });
+        searchInputRef.current?.focus();
 
-        closeBtn.addEventListener("click", () => {
-            input.value = "";
-        });
-
-        document.addEventListener("click", (e) => {
-            if (!box.contains(e.target) && !toggle.contains(e.target)) {
-                box.classList.remove("open");
+        const handleClickOutside = (e) => {
+            if (
+                searchBoxRef.current &&
+                !searchBoxRef.current.contains(e.target) &&
+                searchToggleRef.current &&
+                !searchToggleRef.current.contains(e.target)
+            ) {
+                setSearchOpen(false);
             }
-        });
+        };
+
+        document.addEventListener("click", handleClickOutside);
+        return () => document.removeEventListener("click", handleClickOutside);
+
+    }, [searchOpen]);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (
+                menuRef.current &&
+                !menuRef.current.contains(e.target) &&
+                btnRef.current &&
+                !btnRef.current.contains(e.target)
+            ) {
+                setMenuOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
 
     return (
         <header>
+
             <div className="logo">
-                <img src="/svg/logo.svg" alt="Logo" />
-                <a href="/">
+                <Link to="/">
+                    <img src="/svg/logo.svg" alt="Logo" />
                     <h1>Grafoman</h1>
-                </a>
+                </Link>
             </div>
 
             <div className="menu_container">
+
                 <div className="search-wrapper">
-                    <div className="search-box">
-                        <input id="search" type="text" placeholder="Пошук..." />
-                        <button className="close-search">&times;</button>
+                    <div
+                        ref={searchBoxRef}
+                        className={`search-box ${searchOpen ? "open" : ""}`}
+                    >
+                        <input
+                            ref={searchInputRef}
+                            type="text"
+                            placeholder="Пошук..."
+                        />
+                        <button className="close-search" onClick={() => setSearchOpen(false)}>
+                            &times;
+                        </button>
                     </div>
-                    <button className="search-toggle">
+
+                    <button
+                        ref={searchToggleRef}
+                        className="search-toggle"
+                        onClick={() => setSearchOpen(prev => !prev)}
+                    >
                         <img src="/svg/search.svg" alt="search" />
                     </button>
                 </div>
-                <button><img src="/svg/filter.svg" alt="filter" /></button>
-                <button><img src="/svg/cart.svg" alt="cart" /></button>
-                <button className="profile-btn" onClick={toggleMenu}>
+
+                <button>
+                    <img src="/svg/filter.svg" alt="filter" />
+                </button>
+
+                <button>
+                    <img src="/svg/cart.svg" alt="cart" />
+                </button>
+
+                <button
+                    className="profile-btn"
+                    ref={btnRef}
+                    onClick={toggleMenu}
+                >
                     <img src="/svg/profile.svg" alt="profile" />
                 </button>
+
                 {menuOpen && (
-                    <Personal
-                        isAuth={isAuth}
-                        onClose={() => setMenuOpen(false)}
-                        onLogin={() => { setIsAuth(true); setMenuOpen(false); }}
-                        onLogout={handleLogout}
-                    />
+                    <div ref={menuRef}>
+                        <Log_in
+                            isAuth={isAuth}
+                            onClose={() => setMenuOpen(false)}
+                            onLogin={handleLogin}
+                            onLogout={handleLogout}
+                        />
+                    </div>
                 )}
             </div>
 
             <div className="post_menu">
-                <button>Автори</button>
-                <button>Видавництва</button>
+                <NavLink to="/authors">Автори</NavLink>
+                <NavLink to="/publishers">Видавництва</NavLink>
             </div>
-        </header>
-    )
-}
 
-export default Header
+        </header>
+    );
+}

@@ -9,7 +9,7 @@ body {
   margin: 0;
   background-color: #ECE4C0;
   font-family: 'MyFont', sans-serif;
-  width: 100vw;
+  width: 100%;
 }
 
 header,
@@ -39,4 +39,11 @@ button {
   cursor: pointer;
   font-family: 'MyFont', sans-serif;
   font-size: 32px;
+}
+
+a {
+  display: flex;
+  gap: 30px;
+  color: #ECE4C0;
+  text-decoration: none;
 }

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import '../css/style.css';
-import '../css/App.css';
-import '../css/catalog.css';
+import '../pages/css/style.css';
+import '../App.css';
+import '../pages/css/catalog.css';
 
-function BooksList({ category, categoryName }) {
+export default function BooksList({ category, categoryName }) {
     const [books, setBooks] = useState([]);
     const [page, setPage] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -38,6 +38,10 @@ function BooksList({ category, categoryName }) {
     useEffect(() => {
         setPage(0);
     }, [category]);
+
+    useEffect(() => {
+
+    }, [])
 
     const nextPage = () => setPage(prev => prev + 1);
     const prevPage = () => setPage(prev => Math.max(prev - 1, 0));
@@ -77,7 +81,8 @@ function BooksList({ category, categoryName }) {
                     <ul>
                         {books.map(book => (
                             <li key={`${category}_${book.ID}`}>
-                                <img src={`/img/covers/${book.cover}`} alt={book.title} />
+                                <img src={`/img/covers/${book.cover}`} alt={book.title}
+                                    className={`book-cover ${book.type}`} />
                                 <div>{book.title}</div>
                                 <div>{book.price} грн</div>
                             </li>
@@ -91,5 +96,3 @@ function BooksList({ category, categoryName }) {
         </div>
     );
 }
-
-export default BooksList;

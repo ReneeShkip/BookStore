@@ -1,0 +1,68 @@
+.modal_loger {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-direction: row-reverse;
+}
+
+
+h2 {
+    font-size: 40px;
+    margin: 0;
+}
+
+.log_section {
+    background: white;
+    padding: 20px 30px;
+    width: 300px;
+    border-radius: 10px;
+    position: relative;
+}
+
+.closer:hover {
+    background-color: rgba(71, 123, 145, 0.252) !important;
+}
+
+.inputs {
+    padding: 10px 14px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    transition: 0.2s;
+    background-color: rgba(71, 123, 145, 1);
+    margin: 10px;
+    color: rgba(210, 215, 169, 1);
+    font-weight: bold;
+}
+
+.inputs:focus {
+    border-color: rgb(93, 159, 188);
+}
+
+.inputs::placeholder {
+    color: rgba(210, 215, 169, 0.545);
+}
+
+.button_enter {
+    background: rgba(155, 189, 162, 1) !important;
+    cursor: pointer;
+    color: #2d5d82 !important;
+    width: 90px !important;
+    padding: 20px !important;
+    margin: 10px !important;
+}
+
+.input_section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.button_enter:hover {
+    background: rgb(115, 150, 122) !important;
+}

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import '../css/personal.css'
-function UserMenu({ isAuth, onClose, onLogin, onLogout }) {
+import './css/personal.css'
+export default function UserMenu({ isAuth, onClose, onLogin, onLogout }) {
     const menuRef = useRef(null);
 
     useEffect(() => {
@@ -33,5 +33,3 @@ function UserMenu({ isAuth, onClose, onLogin, onLogout }) {
         </div>
     );
 }
-
-export default UserMenu;

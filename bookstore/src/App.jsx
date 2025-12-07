@@ -1,17 +1,22 @@
-import './css/App.css'
-
-import Header from './components/header'
-import Footer from './components/footer'
-import Catalog from './components/catalog'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Header from "./components/Header";
+import Catalog from "./pages/Catalog";
+import Authors from "./pages/Authors";
+import Publishers from "./pages/Publishers";
 
 function App() {
   return (
-    <>
+    <BrowserRouter>
       <Header />
-      <Catalog />
-      <Footer />
-    </>
-  )
+      <main>
+        <Routes>
+          <Route path="/" element={<Catalog />} />
+          <Route path="/authors" element={<Authors />} />
+          <Route path="/publishers" element={<Publishers />} />
+        </Routes>
+      </main>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
