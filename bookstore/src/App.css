@@ -23,6 +23,19 @@ footer {
   justify-content: space-between;
   flex-wrap: wrap;
   font-size: 30px;
+
+}
+
+footer {
+  margin-top: 40px;
+  color: #ECE4C0;
+  justify-content: center;
+  flex-direction: column;
+
+  h2,
+  h4 {
+    margin: 20px;
+  }
 }
 
 header button,

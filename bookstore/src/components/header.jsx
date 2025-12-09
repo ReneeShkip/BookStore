@@ -122,6 +122,7 @@ export default function Header() {
             </div>
 
             <div className="post_menu">
+                <NavLink to="/">Каталог</NavLink>
                 <NavLink to="/authors">Автори</NavLink>
                 <NavLink to="/publishers">Видавництва</NavLink>
             </div>

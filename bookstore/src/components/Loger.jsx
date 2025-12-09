@@ -45,11 +45,12 @@ export default function Loger({ mode, onClose, onLogin }) {
                         </div>
                         : <div>
                             <h2>Реєстрація</h2>
-                            <div>
-                                <input type="text" placeholder="Логін" />
-                                <input type="text" placeholder="Пароль" />
-                                <input type="text" placeholder="Пошта" />
-                                <input type="text" placeholder="Номер телефону" />
+                            <div className="input_section">
+                                <input className="inputs" type="text" placeholder="Логін" />
+                                <input className="inputs" type="text" placeholder="Пароль" />
+                                <input className="inputs" type="text" placeholder="Пошта" />
+                                <input className="inputs" type="text" placeholder="Номер телефону" />
+                                <button className="button_sign">Зареєструватись</button>
                             </div>
                         </div>}
                 </div>

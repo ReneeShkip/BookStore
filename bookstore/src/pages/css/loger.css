@@ -7,12 +7,11 @@
     justify-content: center;
     text-align: center;
     flex-direction: row-reverse;
-}
 
-
-h2 {
-    font-size: 40px;
-    margin: 0;
+    h2 {
+        font-size: 50px !important;
+        margin: 0;
+    }
 }
 
 .log_section {
@@ -48,7 +47,8 @@ h2 {
     color: rgba(210, 215, 169, 0.545);
 }
 
-.button_enter {
+.button_enter,
+.button_sign {
     background: rgba(155, 189, 162, 1) !important;
     cursor: pointer;
     color: #2d5d82 !important;
@@ -65,4 +65,8 @@ h2 {
 
 .button_enter:hover {
     background: rgb(115, 150, 122) !important;
+}
+
+.button_sign {
+    width: auto !important;
 }

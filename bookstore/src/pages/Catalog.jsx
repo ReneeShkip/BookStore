@@ -36,6 +36,9 @@ export default function Catalog() {
 
     return (
         <div className="main-page">
+            <div className="preview">
+                <img src="/img/preview.png" alt="preview" />
+            </div>
             {categories.map(category => (
                 <BooksList
                     key={category.id}
