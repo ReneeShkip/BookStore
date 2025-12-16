@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 
 import "../pages/css/author.css"
 
@@ -10,7 +11,7 @@ export default function Authors() {
     useEffect(() => {
         fetch('http://localhost:5000/authors')
             .then(res => {
-                if (!res.ok) throw new Error('Failed to fetch authors');
+                if (!res.ok) return <NotFound />;
                 return res.json();
             })
             .then(data => {
@@ -33,23 +34,30 @@ export default function Authors() {
         return <div className="child-page">Помилка: {error}</div>;
     }
 
-
     return (
         <div className="child-page">
             <div className="authors_page">
                 {authors.map(author => (
                     <div key={author.id} className="author_section">
-                        <div className="photo">
-                            <img
-                                src={author.photo ? `/img/authors/${author.photo}` : '/img/authors/default.png'}
-                                alt={author.name}
-                            />
-                        </div>
-                        <h2>{author.first_name} {author.last_name}</h2>
+                        <NavLink to={`/author/details/${author.id}`}>
+                            <div className="photo">
+                                <img
+                                    src={author.photo
+                                        ? `/img/authors/${author.photo}`
+                                        : '/img/authors/default.png'}
+                                    alt={`${author.first_name} ${author.last_name}`}
+                                />
+                                <div className="overlay">
+                                    {author.first_name} {author.last_name}
+                                </div>
+                            </div>
+                        </NavLink>
                     </div>
                 ))}
             </div>
         </div>
     );
+
+
 
 }

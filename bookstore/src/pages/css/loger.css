@@ -8,6 +8,16 @@
     text-align: center;
     flex-direction: row-reverse;
 
+    .button_enter,
+    .button_sign {
+        background: rgba(155, 189, 162, 1);
+        cursor: pointer;
+        color: #2d5d82;
+        width: 90px;
+        padding: 20px;
+        margin: 10px;
+    }
+
     h2 {
         font-size: 50px !important;
         margin: 0;
@@ -47,23 +57,14 @@
     color: rgba(210, 215, 169, 0.545);
 }
 
-.button_enter,
-.button_sign {
-    background: rgba(155, 189, 162, 1) !important;
-    cursor: pointer;
-    color: #2d5d82 !important;
-    width: 90px !important;
-    padding: 20px !important;
-    margin: 10px !important;
-}
-
 .input_section {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.button_enter:hover {
+.button_enter:hover,
+.button_sign:hover {
     background: rgb(115, 150, 122) !important;
 }
 

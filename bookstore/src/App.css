@@ -1,62 +1,77 @@
-@font-face {
-  font-family: 'MyFont';
-  src: url('/fonts/east-sea-dokdo-cyrillic.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-body {
-  margin: 0;
-  background-color: #ECE4C0;
-  font-family: 'MyFont', sans-serif;
-  width: 100%;
-}
-
-header,
-footer {
-  position: relative;
-  width: 100%;
-  margin: 0;
-  background-color: #254C69;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  font-size: 30px;
-
-}
-
-footer {
-  margin-top: 40px;
-  color: #ECE4C0;
-  justify-content: center;
-  flex-direction: column;
-
-  h2,
-  h4 {
-    margin: 20px;
+  @font-face {
+    font-family: 'MyFont';
+    src: url('/fonts/east-sea-dokdo-cyrillic.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
   }
-}
 
-header button,
-footer button {
-  width: 60px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-}
+  body {
+    margin: 0;
+    background-color: #ECE4C0;
+    font-family: 'MyFont', sans-serif;
+    width: 100%;
+  }
 
-button {
-  background-color: rgba(155, 189, 162, 0);
-  border: none;
-  cursor: pointer;
-  font-family: 'MyFont', sans-serif;
-  font-size: 32px;
-}
+  .app-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
 
-a {
-  display: flex;
-  gap: 30px;
-  color: #ECE4C0;
-  text-decoration: none;
-}
+  .content {
+    flex: 1;
+  }
+
+  header,
+  footer {
+    position: relative;
+    width: 100%;
+    margin: 0;
+    background-color: #254C69;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    font-size: 30px;
+
+    button {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+    }
+
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 500;
+  }
+
+  footer {
+    margin-top: 40px;
+    color: #ECE4C0;
+    justify-content: center;
+    flex-direction: column;
+
+    h2,
+    h4 {
+      margin: 20px;
+    }
+  }
+
+  button {
+    background-color: rgba(155, 189, 162, 0);
+    border: none;
+    cursor: pointer;
+    font-family: 'MyFont', sans-serif;
+    font-size: 32px;
+  }
+
+  a {
+    display: flex;
+    gap: 30px;
+    color: #ECE4C0;
+    text-decoration: none;
+  }

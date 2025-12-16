@@ -2,10 +2,9 @@ import React, { useEffect, useState, useRef } from "react";
 import { NavLink, Link } from "react-router-dom";
 import Log_in from "./Log_in";
 
-export default function Header() {
+export default function Header({ isAuth, user, onLoginSuccess, onLogout, onRegister }) {
 
     const [menuOpen, setMenuOpen] = useState(false);
-    const [isAuth, setIsAuth] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
 
     const searchBoxRef = useRef(null);
@@ -15,8 +14,7 @@ export default function Header() {
     const menuRef = useRef(null);
     const btnRef = useRef(null);
 
-    const handleLogin = () => { setIsAuth(true); setMenuOpen(false); };
-    const handleLogout = () => { setIsAuth(false); setMenuOpen(false); };
+
     const toggleMenu = () => setMenuOpen(prev => !prev);
 
     useEffect(() => {
@@ -59,7 +57,6 @@ export default function Header() {
 
     return (
         <header>
-
             <div className="logo">
                 <Link to="/">
                     <img src="/svg/logo.svg" alt="Logo" />
@@ -106,7 +103,11 @@ export default function Header() {
                     ref={btnRef}
                     onClick={toggleMenu}
                 >
-                    <img src="/svg/profile.svg" alt="profile" />
+                    {isAuth ? (
+                        <img src="/img/users/admin.png" alt="admin" />
+                    ) : (
+                        <img src="/svg/profile.svg" alt="profile" />
+                    )}
                 </button>
 
                 {menuOpen && (
@@ -114,8 +115,9 @@ export default function Header() {
                         <Log_in
                             isAuth={isAuth}
                             onClose={() => setMenuOpen(false)}
-                            onLogin={handleLogin}
-                            onLogout={handleLogout}
+                            onLoginSuccess={onLoginSuccess}
+                            onLogout={onLogout}
+                            onRegister={onRegister}
                         />
                     </div>
                 )}

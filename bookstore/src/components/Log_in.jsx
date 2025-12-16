@@ -1,11 +1,32 @@
 import React, { useRef, useState } from "react";
 import Loger from "./Loger";
 import "../pages/css/loger.css"
-export default function Log_in({ isAuth, onClose, onLogin, onLogout }) {
+export default function Log_in({ isAuth, onClose, onLoginSuccess, onLogout, onRegister }) {
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+    const handleLogin = async (login, password) => {
+        try {
+            const res = await fetch("http://localhost:5000/log_in", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ login, password }),
+            });
+
+            if (!res.ok) {
+                const text = await res.text();
+                console.warn("HTTP error:", res.status);
+                console.log(text);
+                return;
+            }
+
+            const data = await res.json();
+
+            onLoginSuccess(data);
+            onClose();
+            onLogin(data);
+        } catch (err) {
+            console.error("Fetch error:", err);
+        }
+    };
 
 
     const [isOpen, setLogerOpen] = useState(false);
@@ -27,7 +48,7 @@ export default function Log_in({ isAuth, onClose, onLogin, onLogout }) {
             {isAuth ? (
                 <div>
                     <button>Особистий кабінет</button>
-                    <button>Вийти</button>
+                    <button onClick={onLogout}>Вийти</button>
                 </div>
             ) : (
                 <div>
@@ -40,7 +61,8 @@ export default function Log_in({ isAuth, onClose, onLogin, onLogout }) {
                 <Loger
                     mode={mode}
                     onClose={() => setLogerOpen(false)}
-                    onLogin={onLogin}
+                    onLogin={handleLogin}
+                    onRegister={onRegister}
                 />
             )}
         </div>

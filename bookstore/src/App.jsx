@@ -1,24 +1,54 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Header from "./components/Header";
-import Catalog from "./pages/Catalog";
-import Authors from "./pages/Authors";
-import Publishers from "./pages/Publishers";
+import { useState } from "react";
+import Header from "./components/header";
 import Footer from "./components/Footer";
 
+import { Outlet } from "react-router-dom";
+
 function App() {
+
+  const handleRegister = async (userData) => {
+    const res = await fetch("http://localhost:5000/sign_up", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(userData)
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      setUser(data);
+      setIsAuth(true);
+    }
+  };
+  const [isAuth, setIsAuth] = useState(false);
+  const [user, setUser] = useState(null);
+
+  const handleLoginSuccess = (userData) => {
+    setIsAuth(true);
+    setUser(userData);
+  };
+
+  const handleLogout = () => {
+    setIsAuth(false);
+    setUser(null);
+  };
+
   return (
-    <BrowserRouter>
-      <Header />
-      <main>
-        <Routes>
-          <Route path="/" element={<Catalog />} />
-          <Route path="/authors" element={<Authors />} />
-          <Route path="/publishers" element={<Publishers />} />
-        </Routes>
+    <div className="app-layout">
+      <Header
+        isAuth={isAuth}
+        user={user}
+        onLoginSuccess={handleLoginSuccess}
+        onLogout={handleLogout}
+        onRegister={handleRegister}
+      />
+
+      <main className="content">
+        <Outlet />
       </main>
+
       <Footer />
-    </BrowserRouter>
-  );
+    </div>
+  )
 }
 
 export default App;

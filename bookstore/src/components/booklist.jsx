@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 import '../pages/css/style.css';
 import '../App.css';
 import '../pages/css/catalog.css';
@@ -12,27 +13,21 @@ export default function BooksList({ category, categoryName }) {
     const pageSize = 7;
 
     useEffect(() => {
-        if (!category) return;
-
-        setLoading(true);
-        setError(null);
-
-        fetch(`http://localhost:5000/books?category=${category}&limit=${pageSize}&offset=${page * pageSize}`)
+        fetch(`http://localhost:5000/books?category=${category}&limit=7&offset=0`)
             .then(res => {
-                if (!res.ok) throw new Error('Failed to fetch books');
+                if (res.status === 404) {
+                    navigate("/404");
+                    return null;
+                }
+                if (!res.ok) {
+                    throw new Error("Server error");
+                }
                 return res.json();
             })
             .then(data => {
-                console.log(data);
-                setBooks(data);
-                setHasMore(data.length === pageSize);
-                setLoading(false);
+                if (data) setBooks(data);
             })
-            .catch(err => {
-                console.error("Fetch error:", err);
-                setError(err.message);
-                setLoading(false);
-            });
+            .catch(err => console.error(err));
     }, [page, category]);
 
     useEffect(() => {
@@ -58,14 +53,7 @@ export default function BooksList({ category, categoryName }) {
     }
 
     if (error) {
-        return (
-            <div className="catalog">
-                <div className="catalog_section">
-                    <div className="category">{categoryName || category}</div>
-                    <div className="error">Помилка: {error}</div>
-                </div>
-            </div>
-        );
+        return <NotFound />;
     }
 
     return (
@@ -78,13 +66,15 @@ export default function BooksList({ category, categoryName }) {
                 {books.length === 0 ? (
                     <div>Книги не знайдено</div>
                 ) : (
-                    <ul>
+                    <ul className="catalog_ul">
                         {books.map(book => (
-                            <li key={`${category}_${book.ID}`}>
-                                <img src={`/img/covers/${book.cover}`} alt={book.title}
-                                    className={`book-cover ${book.type}`} />
-                                <div>{book.title}</div>
-                                <div>{book.price} грн</div>
+                            <li className="catalog_li" key={`${category}_${book.ID}`}>
+                                <NavLink to={`/book/details/${book.book_id}`}>
+                                    <img src={`/img/covers/${book.cover}`} alt={book.title}
+                                        className={`book-cover ${book.type}`} />
+                                    <div className="short_info">{book.title}</div>
+                                    <div className="short_info">{book.price} грн</div>
+                                </NavLink>
                             </li>
                         ))}
                     </ul>
