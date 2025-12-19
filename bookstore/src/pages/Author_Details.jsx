@@ -57,8 +57,9 @@ export default function AuthorDetails() {
                         <ul className="listbook">
                             {books.map(book => (
                                 <li className="option_book" key={book.book_type_id}>
-                                    <NavLink to={`/book/details/${book.book_id}`}>
+                                    <NavLink to={`/book/details/${book.book_type_id}`}>
                                         <div className="au_short_info">{book.title}</div>
+                                        <div className="au_short_info">{book.type}</div>
                                         <div className="au_short_info">{book.year}</div>
                                     </NavLink>
                                 </li>

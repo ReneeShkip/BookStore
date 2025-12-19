@@ -7,14 +7,14 @@ export default function Loger({ mode, onClose, onLogin, onRegister }) {
     const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
     const [first_name, setfName] = useState("");
-    const [lastname, setlName] = useState("");
-    const [phone, setPhone] = useState("");
+    const [last_name, setlName] = useState("");
+    const [phone_number, setPhone] = useState("");
     const [role, setRole] = useState("client");
 
 
     const handleRegist = (e) => {
         e.preventDefault();
-        onRegister({ login, first_name, lastname, password, phone, role });
+        onRegister({ login, first_name, last_name, password, phone_number, role });
     };
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -42,7 +42,7 @@ export default function Loger({ mode, onClose, onLogin, onRegister }) {
 
     return (
         <div>
-            <div className="modal_loger" ref={ToggleRef}>
+            <div className={`modal_loger_${mode}`} ref={ToggleRef}>
                 <button className="closer" onClick={() => {
                     setClose(true);
                     onClose?.();
@@ -77,14 +77,57 @@ export default function Loger({ mode, onClose, onLogin, onRegister }) {
                         : <form onSubmit={handleRegist}>
                             <h2>Реєстрація</h2>
                             <div className="input_section">
-                                <input name="login" className="inputs" type="text" placeholder="Логін" value={login} onChange={(e) => setLogin(e.target.value)} />
-                                <input value={first_name} className="inputs" placeholder="Ім'я" onChange={(e) => setfName(e.target.value)} />
-                                <input name="last_name" className="inputs" type="text" placeholder="Прізвище" value={lastname} onChange={(e) => setlName(e.target.value)} />
-                                <input name="password" className="inputs" type="text" placeholder="Пароль" value={password} onChange={(e) => setPassword(e.target.value)} />
-                                <input name="phone" className="inputs" type="text" placeholder="Номер телефону" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                                <input
+                                    name="login"
+                                    className="inputs"
+                                    type="text"
+                                    placeholder="Логін"
+                                    value={login}
+                                    onChange={(e) => setLogin(e.target.value)}
+                                />
 
-                                <button className="button_sign" type="submit">Зареєструватись</button>
+                                <input
+                                    name="first_name"
+                                    className="inputs"
+                                    type="text"
+                                    placeholder="Імʼя"
+                                    value={first_name}
+                                    onChange={(e) => setfName(e.target.value)}
+                                />
+
+                                <input
+                                    name="last_name"
+                                    className="inputs"
+                                    type="text"
+                                    placeholder="Прізвище"
+                                    value={last_name}
+                                    onChange={(e) => setlName(e.target.value)}
+                                />
+
+                                <input
+                                    name="password"
+                                    className="inputs"
+                                    type="password"
+                                    placeholder="Пароль"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    autoComplete="current-password"
+                                />
+
+                                <input
+                                    name="phone_number"
+                                    className="inputs"
+                                    type="text"
+                                    placeholder="Номер телефону"
+                                    value={phone_number}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                />
+
+                                <button className="button_sign" type="submit">
+                                    Зареєструватись
+                                </button>
                             </div>
+
                         </form>}
                 </div>
             </div>

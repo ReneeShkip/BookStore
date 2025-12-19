@@ -1,16 +1,18 @@
 import React, { useEffect, useState, useRef } from "react";
 import { NavLink, Link } from "react-router-dom";
 import Log_in from "./Log_in";
+import Subfilters from "./subfilters";
 
 export default function Header({ isAuth, user, onLoginSuccess, onLogout, onRegister }) {
 
     const [menuOpen, setMenuOpen] = useState(false);
+    const [filterOpen, setFilterOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
 
     const searchBoxRef = useRef(null);
     const searchToggleRef = useRef(null);
     const searchInputRef = useRef(null);
-
+    const filterref = useRef(null);
     const menuRef = useRef(null);
     const btnRef = useRef(null);
 
@@ -54,6 +56,29 @@ export default function Header({ isAuth, user, onLoginSuccess, onLogout, onRegis
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (
+                filterref.current &&
+                !filterref.current.contains(e.target)
+            ) {
+                setFilterOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const [filters, setFilters] = useState({
+        genres: [],
+        langs: [],
+        types: [],
+        price: {
+            min: "",
+            max: ""
+        }
+    });
 
     return (
         <header>
@@ -90,7 +115,10 @@ export default function Header({ isAuth, user, onLoginSuccess, onLogout, onRegis
                     </button>
                 </div>
 
-                <button>
+                <button
+                    className="filter-toggle"
+                    onClick={() => setFilterOpen(prev => !prev)}
+                >
                     <img src="/svg/filter.svg" alt="filter" />
                 </button>
 
@@ -119,6 +147,14 @@ export default function Header({ isAuth, user, onLoginSuccess, onLogout, onRegis
                             onLogout={onLogout}
                             onRegister={onRegister}
                         />
+                    </div>
+                )}
+
+                {filterOpen && (
+                    <div ref={filterref}>
+                        <Subfilters onClose={() => setFilterOpen(false)}
+                            filters={filters}
+                            setFilters={setFilters} />
                     </div>
                 )}
             </div>

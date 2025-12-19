@@ -6,7 +6,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
-    origin: "http://localhost:5176"
+    origin: "http://localhost:5173"
 }));
 
 const db = mysql.createPool({
@@ -26,6 +26,54 @@ app.get("/categories", (req, res) => {
         if (err) {
             console.error("SQL error:", err);
             return res.status(500).json({ error: "Failed to fetch categories" });
+        }
+        res.json(results);
+    });
+});
+
+app.get("/genres", (req, res) => {
+    const query = "select id, genre from genres";
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("SQL error:", err);
+            return res.status(500).json({ error: "Failed to fetch genres" });
+        }
+        res.json(results);
+    });
+});
+
+app.get("/types", (req, res) => {
+    const query = "select id, type from type";
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("SQL error:", err);
+            return res.status(500).json({ error: "Failed to fetch type" });
+        }
+        res.json(results);
+    });
+});
+
+app.get("/price", (req, res) => {
+    const query = "select max(bt.price) as max, min(bt.price) as min  from book_type bt";
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("SQL error:", err);
+            return res.status(500).json({ error: "Failed to fetch type" });
+        }
+        res.json(results);
+    });
+});
+
+app.get("/langs", (req, res) => {
+    const query = "select id, name from langs";
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("SQL error:", err);
+            return res.status(500).json({ error: "Failed to fetch languages" });
         }
         res.json(results);
     });
@@ -116,48 +164,49 @@ app.get("/authors_books", (req, res) => {
     const { bookId, authorId, limit = 20, offset = 0 } = req.query;
 
     let query = `
-        SELECT DISTINCT 
-            bt.id AS book_type_id, 
+        SELECT DISTINCT
+            bt.id AS book_type_id,
             b.id AS book_id,
             b.title,
-            p.name as publisher,
+            p.name AS publisher,
             bt.type_id,
+            t.type,
             bt.price,
             b.annotation,
-            bt.availability, 
-            b.cover, 
-            b.year, 
+            bt.availability,
+            b.cover,
+            b.year,
             a.id AS author_id,
-            a.first_name, 
-            a.last_name, 
-            a.biography, 
-            a.photo
+            a.first_name,
+            a.last_name,
+            a.biography,
+            a.photo,
+            l.name as lang
         FROM book_type bt
         JOIN books b ON b.id = bt.book_id
         JOIN authors a ON a.id = b.author
         JOIN publishers p ON p.id = b.publisher_id
+        JOIN type t ON t.id = bt.type_id
+        JOIN langs l ON l.id = b.lang_id
     `;
 
     const conditions = [];
     const params = [];
 
     if (bookId) {
-        conditions.push("b.id = ?");
+        // Підзапит для book_id
+        conditions.push("bt.book_id = (SELECT book_id FROM book_type WHERE id = ?)");
         params.push(bookId);
     }
 
     if (authorId) {
         conditions.push("a.id = ?");
         params.push(authorId);
-        conditions.push("bt.type_id = 1");
     }
-
     if (conditions.length > 0) {
         query += " WHERE " + conditions.join(" AND ");
     }
-
     query += " ORDER BY bt.id LIMIT ? OFFSET ?";
-
     params.push(Number(limit), Number(offset));
 
     db.query(query, params, (err, results) => {
@@ -209,10 +258,8 @@ app.post("/log_in", async (req, res) => {
 app.post("/sign_up", async (req, res) => {
     console.log("Body received:", req.body);
 
-    // ВИПРАВЛЕНО: витягуємо ВСІ потрібні поля
     const { login, password, first_name, last_name, phone_number, role } = req.body || {};
 
-    // Перевіряємо обов'язкові поля
     if (!login || !password) {
         console.log("Login or password missing");
         return res.status(400).send("Login or password missing");
@@ -226,6 +273,38 @@ app.post("/sign_up", async (req, res) => {
             return res.status(500).send("Server error");
         }
         res.json({ message: "User registered successfully", login });
+    });
+});
+
+
+app.get("/filteredbooks", (req, res) => {
+
+    const { genreid, langid, type, minprice, maxprice, limit = 100, offset = 0 } = req.query;
+    const query = `
+        SELECT
+        bt.ID AS ID,
+        b.ID AS book_id,
+        b.title AS title,
+        b.year AS year,
+        a.first_name AS first_name,
+        a.last_name AS last_name,
+        bt.price AS price,
+        b.cover AS cover,
+        t.type AS type,
+        l.name AS lang
+    FROM book_type bt
+    JOIN books b ON b.ID = bt.book_id
+    JOIN authors a ON a.ID = b.author
+    JOIN book_genre bg ON bg.book_id = b.ID
+    JOIN type t ON t.ID = bt.type_id
+    JOIN langs l ON l.id = b.lang_id;`;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("SQL error:", err);
+            return res.status(500).json({ error: "Failed to fetch type" });
+        }
+        res.json(results);
     });
 });
 

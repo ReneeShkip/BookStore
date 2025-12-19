@@ -119,6 +119,14 @@
     border-radius: 100% !important;
 }
 
+.modal_loger_register {
+    .closer {
+
+
+        margin-bottom: 450px !important;
+    }
+}
+
 .personal-popup {
     position: absolute;
     top: 70px;

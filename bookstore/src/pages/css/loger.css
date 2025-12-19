@@ -1,4 +1,6 @@
-.modal_loger {
+.modal_loger,
+.modal_loger_login,
+.modal_loger_register {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.55);

@@ -7,7 +7,7 @@ import Publishers from "./pages/Publishers";
 import AuthorDetails from "./pages/Author_Details";
 import BookDetails from "./pages/Book_Details.jsx";
 import NotFound from "./pages/notfound.jsx";
-import { userLoader } from "./loaders/userloaders";
+import SetBooks from "./pages/Set_of_books.jsx";
 
 const router = createBrowserRouter([
   {
@@ -18,8 +18,9 @@ const router = createBrowserRouter([
       { index: true, element: <Catalog /> },
       { path: "authors", element: <Authors /> },
       { path: "publishers", element: <Publishers /> },
-      { path: "author/details/:id", element: <AuthorDetails />, loader: userLoader },
-      { path: "book/details/:id", element: <BookDetails />, loader: userLoader },
+      { path: "author/details/:id", element: <AuthorDetails /> },
+      { path: "book/details/:id", element: <BookDetails /> },
+      { path: "/books/filtered", element: < SetBooks /> },
       { path: "*", element: <NotFound /> },
     ],
   },

@@ -23,16 +23,29 @@
     margin: 0;
     width: auto;
     padding: 0;
+
+    .show-more {
+        background-color: #254C69;
+        height: 50px;
+        width: 20%;
+        color: #ECE4C0;
+        padding: 10px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 50px 15px;
+    }
 }
 
-.paper {
+.Паперова {
     border-radius: 0 10px 10px 0;
     border: #254C69 5px solid;
 }
 
-.electro {
+.Електронна {
     border-radius: 20px;
-    border: rgba(210, 215, 169, 1) 7px solid;
+    border: rgba(210, 215, 169, 1) 6px solid;
 }
 
 .main-page {
