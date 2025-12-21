@@ -3,18 +3,20 @@ import { NavLink, Link } from "react-router-dom";
 import Log_in from "./Log_in";
 import Subfilters from "./subfilters";
 
-export default function Header({ isAuth, user, onLoginSuccess, onLogout, onRegister }) {
+export default function Header({ isAuth, user, onLoginSuccess, onLogin, onLogout, onRegister, authError }) {
 
     const [menuOpen, setMenuOpen] = useState(false);
     const [filterOpen, setFilterOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
-
+    const [searchText, setSearchText] = useState("");
     const searchBoxRef = useRef(null);
     const searchToggleRef = useRef(null);
     const searchInputRef = useRef(null);
     const filterref = useRef(null);
     const menuRef = useRef(null);
     const btnRef = useRef(null);
+    const goSearchRef = useRef(null);
+    const searchtext = ""
 
 
     const toggleMenu = () => setMenuOpen(prev => !prev);
@@ -70,6 +72,19 @@ export default function Header({ isAuth, user, onLoginSuccess, onLogout, onRegis
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    useEffect(() => {
+        if (!searchText) return;
+
+        fetch(`http://localhost:5000/search?q=${searchText}`)
+            .then(res => {
+                if (!res.ok) throw new Error("Server error");
+                return res.json();
+            })
+            .then(data => setSearchRes(data))
+            .catch(console.error);
+    }, [searchText]);
+
+
     const [filters, setFilters] = useState({
         genres: [],
         langs: [],
@@ -97,11 +112,20 @@ export default function Header({ isAuth, user, onLoginSuccess, onLogout, onRegis
                         className={`search-box ${searchOpen ? "open" : ""}`}
                     >
                         <input
+                            className="inputs"
+                            name="search_input"
                             ref={searchInputRef}
                             type="text"
                             placeholder="Пошук..."
                         />
-                        <button className="close-search" onClick={() => setSearchOpen(false)}>
+                        <button
+                            className="close-search"
+                            onClick={() => {
+                                if (searchInputRef.current) {
+                                    searchInputRef.current.value = "";
+                                }
+                            }}
+                        >
                             &times;
                         </button>
                     </div>
@@ -145,7 +169,9 @@ export default function Header({ isAuth, user, onLoginSuccess, onLogout, onRegis
                             onClose={() => setMenuOpen(false)}
                             onLoginSuccess={onLoginSuccess}
                             onLogout={onLogout}
+                            onLogin={onLogin}
                             onRegister={onRegister}
+                            authError={authError}
                         />
                     </div>
                 )}

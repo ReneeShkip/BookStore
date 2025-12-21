@@ -96,8 +96,6 @@ export default function BooksList({ category, categoryName }) {
                                 </button>
                             )}
                         </ul>
-
-
                     </>
                 )}
             </div>

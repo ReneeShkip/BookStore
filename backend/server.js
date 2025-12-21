@@ -1,12 +1,16 @@
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2");
+
 const app = express();
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
-    origin: "http://localhost:5173"
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"]
 }));
 
 const db = mysql.createPool({
@@ -218,42 +222,26 @@ app.get("/authors_books", (req, res) => {
     });
 });
 
-app.post("/log_in", async (req, res) => {
-    console.log("Body received:", req.body);
+app.post("/log_in", (req, res) => {
+    const { login, password } = req.body;
 
-    const { login, password } = req.body || {};
-    if (!login || !password) {
-        console.log("Login or password missing");
-        return res.status(400).send("Login or password missing");
-    }
-
-    const query = `SELECT id, login, password, role FROM users WHERE login = ? LIMIT 1`;
-
-    db.query(query, [login], async (err, results) => {
-        if (err) {
-            console.error("SQL error:", err);
-            return res.status(500).send("Server error");
-        }
-
-        console.log("DB results:", results);
-
-        if (!results || results.length === 0) {
-            return res.status(401).send("Невірний логін або пароль");
-        }
-
-        const user = results[0];
-
-        try {
-            if (password !== user.password) {
-                return res.status(401).send("Невірний логін або пароль");
+    db.query(
+        `SELECT id, login, password, role FROM users WHERE login = ? LIMIT 1`,
+        [login],
+        async (err, results) => {
+            if (err) return res.status(500).send("Server error");
+            if (!results || results.length === 0) {
+                return res.status(401).json({ error: "Невірний логін або пароль" });
+            }
+            const user = results[0];
+            if (password != user.password) {
+                return res.status(401).json({ error: "Невірний логін або пароль" });
             }
             res.json({ login: user.login, role: user.role });
-        } catch (err) {
-            console.error("Error in bcrypt:", err);
-            res.status(500).send("Server error");
         }
-    });
+    );
 });
+
 
 app.post("/sign_up", async (req, res) => {
     console.log("Body received:", req.body);
@@ -279,30 +267,79 @@ app.post("/sign_up", async (req, res) => {
 
 app.get("/filteredbooks", (req, res) => {
 
-    const { genreid, langid, type, minprice, maxprice, limit = 100, offset = 0 } = req.query;
-    const query = `
-        SELECT
-        bt.ID AS ID,
-        b.ID AS book_id,
-        b.title AS title,
-        b.year AS year,
-        a.first_name AS first_name,
-        a.last_name AS last_name,
-        bt.price AS price,
-        b.cover AS cover,
-        t.type AS type,
-        l.name AS lang
-    FROM book_type bt
-    JOIN books b ON b.ID = bt.book_id
-    JOIN authors a ON a.ID = b.author
-    JOIN book_genre bg ON bg.book_id = b.ID
-    JOIN type t ON t.ID = bt.type_id
-    JOIN langs l ON l.id = b.lang_id;`;
+    const genres = req.query.genres
+        ? req.query.genres.split(",").map(Number)
+        : [];
 
-    db.query(query, (err, results) => {
+    const types = req.query.types
+        ? req.query.types.split(",").map(Number)
+        : [];
+
+    const langs = req.query.langs
+        ? req.query.langs.split(",").map(Number)
+        : [];
+
+    const minPrice = req.query.minPrice
+        ? Number(req.query.minPrice)
+        : null;
+
+    const maxPrice = req.query.maxPrice
+        ? Number(req.query.maxPrice)
+        : null;
+
+    let sql = `
+        SELECT DISTINCT
+            bt.ID AS ID,
+            b.ID AS book_id,
+            b.title AS title,
+            b.year AS year,
+            a.first_name AS first_name,
+            a.last_name AS last_name,
+            bt.price AS price,
+            b.cover AS cover,
+            t.type AS type,
+            bt.availability,
+            l.name AS lang
+        FROM book_type bt
+        JOIN books b ON b.ID = bt.book_id
+        JOIN authors a ON a.ID = b.author
+        JOIN book_genre bg ON bg.book_id = b.ID
+        JOIN type t ON t.ID = bt.type_id
+        JOIN langs l ON l.id = b.lang_id
+        WHERE 1=1
+    `;
+
+    const values = [];
+
+    if (genres.length) {
+        sql += ` AND bg.genre_id IN (${genres.map(() => "?").join(",")})`;
+        values.push(...genres);
+    }
+
+    if (types.length) {
+        sql += ` AND bt.type_id IN (${types.map(() => "?").join(",")})`;
+        values.push(...types);
+    }
+
+    if (langs.length) {
+        sql += ` AND b.lang_id IN (${langs.map(() => "?").join(",")})`;
+        values.push(...langs);
+    }
+
+    if (minPrice !== null) {
+        sql += ` AND bt.price >= ?`;
+        values.push(minPrice);
+    }
+
+    if (maxPrice !== null) {
+        sql += ` AND bt.price <= ?`;
+        values.push(maxPrice);
+    }
+
+    db.query(sql, values, (err, results) => {
         if (err) {
             console.error("SQL error:", err);
-            return res.status(500).json({ error: "Failed to fetch type" });
+            return res.status(500).json({ error: "Failed to fetch books" });
         }
         res.json(results);
     });

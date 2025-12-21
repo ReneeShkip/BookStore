@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 
-export default function Loger({ mode, onClose, onLogin, onRegister }) {
+export default function Loger({ mode, onClose, onLogin, onRegister, authError }) {
 
     const ToggleRef = useRef(null);
     const [isClosed, setClose] = useState(false);
@@ -10,7 +10,41 @@ export default function Loger({ mode, onClose, onLogin, onRegister }) {
     const [last_name, setlName] = useState("");
     const [phone_number, setPhone] = useState("");
     const [role, setRole] = useState("client");
+    const [errors, setErrors] = useState({});
 
+    const [form, setForm] = useState({
+        login: "",
+        password: ""
+    });
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+
+        setForm(prev => ({
+            ...prev,
+            [name]: value
+        }));
+
+        setErrors(prev => ({
+            ...prev,
+            [name]: ""
+        }));
+    };
+
+    const validate = () => {
+        const newErrors = {};
+
+        if (!form.login.trim()) {
+            newErrors.login = "Логін обовʼязковий";
+        }
+
+        if (!form.password.trim()) {
+            newErrors.password = "Пароль обовʼязковий";
+        }
+
+        setErrors(newErrors);
+
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleRegist = (e) => {
         e.preventDefault();
@@ -18,7 +52,9 @@ export default function Loger({ mode, onClose, onLogin, onRegister }) {
     };
     const handleSubmit = (e) => {
         e.preventDefault();
-        onLogin(login, password);
+        if (!validate()) return;
+
+        onLogin(form);
     };
 
     useEffect(() => {
@@ -56,22 +92,30 @@ export default function Loger({ mode, onClose, onLogin, onRegister }) {
 
                             <div className="input_section">
                                 <input
-                                    name="login" className="inputs" type="text" placeholder="Логін" value={login}
-                                    onChange={(e) => setLogin(e.target.value)}
+                                    name="login"
+                                    type="text"
+                                    placeholder="Логін"
+                                    value={form.login}
+                                    onChange={handleChange}
+                                    className={`inputs ${errors.login ? "error" : ""}`}
                                     autoComplete="username"
                                 />
-
+                                {errors.login && <span className="error-text">{errors.login}</span>}
                                 <input
-                                    name="password" className="inputs" type="password" placeholder="Пароль"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    name="password"
+                                    type="password"
+                                    placeholder="Пароль"
+                                    value={form.password}
+                                    onChange={handleChange}
+                                    className={`inputs ${errors.password ? "error" : ""}`}
                                     autoComplete="current-password"
                                 />
-
+                                {errors.password && <span className="error-text">{errors.password}</span>}
                                 <button className="button_enter" type="submit">
                                     Увійти
                                 </button>
                             </div>
+                            {authError && <div className="error">{authError}</div>}
                         </form>
 
                         : <form onSubmit={handleRegist}>
@@ -118,6 +162,7 @@ export default function Loger({ mode, onClose, onLogin, onRegister }) {
                                     name="phone_number"
                                     className="inputs"
                                     type="text"
+                                    pattern="^\+380\d{9}$"
                                     placeholder="Номер телефону"
                                     value={phone_number}
                                     onChange={(e) => setPhone(e.target.value)}

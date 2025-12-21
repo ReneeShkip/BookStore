@@ -1,33 +1,7 @@
 import React, { useRef, useState } from "react";
 import Loger from "./Loger";
 import "../pages/css/loger.css"
-export default function Log_in({ isAuth, onClose, onLoginSuccess, onLogout, onRegister }) {
-
-    const handleLogin = async (login, password) => {
-        try {
-            const res = await fetch("http://localhost:5000/log_in", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ login, password }),
-            });
-
-            if (!res.ok) {
-                const text = await res.text();
-                console.warn("HTTP error:", res.status);
-                console.log(text);
-                return;
-            }
-
-            const data = await res.json();
-
-            onLoginSuccess(data);
-            onClose();
-            onLogin(data);
-        } catch (err) {
-            console.error("Fetch error:", err);
-        }
-    };
-
+export default function Log_in({ isAuth, onClose, onLoginSuccess, onLogout, onRegister, onLogin, authError }) {
 
     const [isOpen, setLogerOpen] = useState(false);
     const [mode, setmode] = useState("login");
@@ -61,8 +35,9 @@ export default function Log_in({ isAuth, onClose, onLoginSuccess, onLogout, onRe
                 <Loger
                     mode={mode}
                     onClose={() => setLogerOpen(false)}
-                    onLogin={handleLogin}
+                    onLogin={onLogin}
                     onRegister={onRegister}
+                    authError={authError}
                 />
             )}
         </div>

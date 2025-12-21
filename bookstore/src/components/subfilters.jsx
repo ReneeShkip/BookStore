@@ -26,6 +26,9 @@ export default function Subfilters({ filters, setFilters }) {
     const priceref = useRef(null);
     const [priceOpen, setPriceOpen] = useState(false);
 
+    let maxer = 0;
+    let miner = 0;
+
     function handleCheckboxChange(category, value, isChecked) {
         setFilters(prev => {
             const current = prev[category] || [];
@@ -154,6 +157,18 @@ export default function Subfilters({ filters, setFilters }) {
     }, []);
 
     useEffect(() => {
+        if (priceOpen && price.min && price.max) {
+            setFilters(prev => ({
+                ...prev,
+                price: {
+                    min: prev.price.min || price.min,
+                    max: prev.price.max || price.max
+                }
+            }));
+        }
+    }, [priceOpen, price.min, price.max]);
+
+    useEffect(() => {
         fetch(`http://localhost:5000/price`)
             .then(res => {
                 if (res.status === 404) {
@@ -174,6 +189,8 @@ export default function Subfilters({ filters, setFilters }) {
             })
             .catch(err => console.error(err));
     }, []);
+
+
 
     const columns = Math.ceil(Math.sqrt(genres.length));
     const matrix = [];
@@ -225,9 +242,9 @@ export default function Subfilters({ filters, setFilters }) {
                                                                 name="genres" type="checkbox"
                                                                 value={genre.genre}
                                                                 className="hidden_checkbox"
-                                                                checked={filters.genres.includes(genre.genre)}
+                                                                checked={filters.genres.includes(genre.id)}
                                                                 onChange={(e) =>
-                                                                    handleCheckboxChange("genres", genre.genre, e.target.checked)
+                                                                    handleCheckboxChange("genres", genre.id, e.target.checked)
                                                                 } />
                                                             <span className="genres_item">{genre.genre}</span >
                                                         </label>
@@ -250,9 +267,9 @@ export default function Subfilters({ filters, setFilters }) {
                                                     <input name="genres" type="checkbox"
                                                         value={type.type}
                                                         className="hidden_checkbox"
-                                                        checked={filters.types.includes(type.type)}
+                                                        checked={filters.types.includes(type.id)}
                                                         onChange={(e) =>
-                                                            handleCheckboxChange("types", type.type, e.target.checked)
+                                                            handleCheckboxChange("types", type.id, e.target.checked)
                                                         } />
                                                     <span className="genres_item">{type.type}</span >
                                                 </label>
@@ -273,9 +290,9 @@ export default function Subfilters({ filters, setFilters }) {
                                                     <input name="genres" type="checkbox"
                                                         value={lang.name}
                                                         className="hidden_checkbox"
-                                                        checked={filters.langs.includes(lang.name)}
+                                                        checked={filters.langs.includes(lang.id)}
                                                         onChange={(e) =>
-                                                            handleCheckboxChange("langs", lang.name, e.target.checked)
+                                                            handleCheckboxChange("langs", lang.id, e.target.checked)
                                                         } />
                                                     <span className="genres_item">{lang.name}</span >
                                                 </label>
@@ -307,10 +324,15 @@ export default function Subfilters({ filters, setFilters }) {
                                             onBlur={() => {
                                                 setFilters(prev => {
                                                     let val = Number(prev.price.min);
+                                                    let maxval = Number(prev.price.max);
 
                                                     if (isNaN(val) || val < price.min) {
                                                         val = price.min;
                                                     }
+                                                    if (val > price.max) {
+                                                        val = price.max;
+                                                    }
+                                                    if (maxval < val) val = maxval;
 
                                                     return {
                                                         ...prev,
@@ -328,6 +350,7 @@ export default function Subfilters({ filters, setFilters }) {
                                             max={price.max}
                                             onChange={(e) => {
                                                 const val = e.target.value;
+                                                maxer = val;
                                                 setFilters(prev => ({
                                                     ...prev,
                                                     price: { ...prev.price, max: val }
@@ -336,11 +359,15 @@ export default function Subfilters({ filters, setFilters }) {
                                             onBlur={() => {
                                                 setFilters(prev => {
                                                     let val = Number(prev.price.max);
+                                                    let minVal = Number(prev.price.min);
 
                                                     if (isNaN(val) || val > price.max) {
                                                         val = price.max;
                                                     }
-
+                                                    if (val < price.min) {
+                                                        val = price.min;
+                                                    }
+                                                    if (minVal > val) val = minVal;
                                                     return {
                                                         ...prev,
                                                         price: { ...prev.price, max: val }

@@ -27,7 +27,7 @@
     .show-more {
         background-color: #254C69;
         height: 50px;
-        width: 20%;
+        width: 8vw;
         color: #ECE4C0;
         padding: 10px;
         border-radius: 10px;
@@ -59,7 +59,7 @@
 
 .catalog_li {
     img {
-        width: 60%;
+        width: 8vw;
     }
 
     a {
