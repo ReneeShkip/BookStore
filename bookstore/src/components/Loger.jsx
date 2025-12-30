@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 
-export default function Loger({ mode, onClose, onLogin, onRegister, authError }) {
+export default function Loger({ onLogin, authError, onClose, mode, onRegister }) {
 
     const ToggleRef = useRef(null);
     const [isClosed, setClose] = useState(false);
@@ -50,8 +50,9 @@ export default function Loger({ mode, onClose, onLogin, onRegister, authError })
         e.preventDefault();
         onRegister({ login, first_name, last_name, password, phone_number, role });
     };
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        await onLogin(form);
         if (!validate()) return;
 
         onLogin(form);
@@ -162,7 +163,6 @@ export default function Loger({ mode, onClose, onLogin, onRegister, authError })
                                     name="phone_number"
                                     className="inputs"
                                     type="text"
-                                    pattern="^\+380\d{9}$"
                                     placeholder="Номер телефону"
                                     value={phone_number}
                                     onChange={(e) => setPhone(e.target.value)}

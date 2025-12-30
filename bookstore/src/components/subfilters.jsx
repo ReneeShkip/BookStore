@@ -7,7 +7,13 @@ export default function Subfilters({ filters, setFilters }) {
 
     const navigate = useNavigate();
     function applyFilters() {
-        navigate("/books/filtered", { state: { filters } });
+
+        navigate("/books/filteredbooks", {
+            state: {
+                mode: "filters",
+                filters: filters
+            }
+        });
     }
 
     const [genres, setGenres] = useState([]);
@@ -25,9 +31,6 @@ export default function Subfilters({ filters, setFilters }) {
     const [price, setPrice] = useState({ min: "", max: "" });
     const priceref = useRef(null);
     const [priceOpen, setPriceOpen] = useState(false);
-
-    let maxer = 0;
-    let miner = 0;
 
     function handleCheckboxChange(category, value, isChecked) {
         setFilters(prev => {
@@ -350,7 +353,6 @@ export default function Subfilters({ filters, setFilters }) {
                                             max={price.max}
                                             onChange={(e) => {
                                                 const val = e.target.value;
-                                                maxer = val;
                                                 setFilters(prev => ({
                                                     ...prev,
                                                     price: { ...prev.price, max: val }

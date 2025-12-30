@@ -15,7 +15,6 @@ export default function Authors() {
                 return res.json();
             })
             .then(data => {
-                console.log("Authors loaded:", data);
                 setAuthors(data);
                 setLoading(false);
             })

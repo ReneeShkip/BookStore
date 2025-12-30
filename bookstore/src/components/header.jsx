@@ -1,10 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import Log_in from "./Log_in";
 import Subfilters from "./subfilters";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
 
-export default function Header({ isAuth, user, onLoginSuccess, onLogin, onLogout, onRegister, authError }) {
-
+export default function Header() {
+    const { isAuth, handleLogin, handleRegister, handleLogout, authError } = useContext(UserContext);
+    const navigate = useNavigate();
     const [menuOpen, setMenuOpen] = useState(false);
     const [filterOpen, setFilterOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
@@ -15,9 +18,11 @@ export default function Header({ isAuth, user, onLoginSuccess, onLogin, onLogout
     const filterref = useRef(null);
     const menuRef = useRef(null);
     const btnRef = useRef(null);
+    const [searchRes, setSearchRes] = useState([]);
     const goSearchRef = useRef(null);
-    const searchtext = ""
-
+    function applySearch() {
+        navigate("/books/searched", { state: { searchText } });
+    }
 
     const toggleMenu = () => setMenuOpen(prev => !prev);
 
@@ -72,17 +77,14 @@ export default function Header({ isAuth, user, onLoginSuccess, onLogin, onLogout
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    useEffect(() => {
-        if (!searchText) return;
+    function applySearch() {
+        if (!searchText.trim()) return;
 
-        fetch(`http://localhost:5000/search?q=${searchText}`)
-            .then(res => {
-                if (!res.ok) throw new Error("Server error");
-                return res.json();
-            })
-            .then(data => setSearchRes(data))
-            .catch(console.error);
-    }, [searchText]);
+        navigate("/books/filteredbooks", {
+            state: { mode: "search", q: searchText }
+        });
+    }
+
 
 
     const [filters, setFilters] = useState({
@@ -113,17 +115,17 @@ export default function Header({ isAuth, user, onLoginSuccess, onLogin, onLogout
                     >
                         <input
                             className="inputs"
-                            name="search_input"
-                            ref={searchInputRef}
                             type="text"
                             placeholder="Пошук..."
+                            value={searchText}
+                            onChange={(e) => setSearchText(e.target.value)}
                         />
                         <button
                             className="close-search"
                             onClick={() => {
-                                if (searchInputRef.current) {
-                                    searchInputRef.current.value = "";
-                                }
+                                setSearchText("");
+                                setSearchRes([]);
+                                setSearchOpen(false);
                             }}
                         >
                             &times;
@@ -133,7 +135,12 @@ export default function Header({ isAuth, user, onLoginSuccess, onLogin, onLogout
                     <button
                         ref={searchToggleRef}
                         className="search-toggle"
-                        onClick={() => setSearchOpen(prev => !prev)}
+                        onClick={() => { !searchOpen ? setSearchOpen(true) : applySearch() }}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                applySearch();
+                            }
+                        }}
                     >
                         <img src="/svg/search.svg" alt="search" />
                     </button>
@@ -167,10 +174,9 @@ export default function Header({ isAuth, user, onLoginSuccess, onLogin, onLogout
                         <Log_in
                             isAuth={isAuth}
                             onClose={() => setMenuOpen(false)}
-                            onLoginSuccess={onLoginSuccess}
-                            onLogout={onLogout}
-                            onLogin={onLogin}
-                            onRegister={onRegister}
+                            onLogin={handleLogin}
+                            onRegister={handleRegister}
+                            onLogout={handleLogout}
                             authError={authError}
                         />
                     </div>

@@ -2,12 +2,83 @@ import { useParams, NavLink, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import "../pages/css/details.css";
 import { normalizeBook } from "../utils/normalizebooks";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
 
 export default function BookDetails() {
+    const { user } = useContext(UserContext);
     const { id } = useParams();
     const [book, setBook] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const [coments, setComents] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
+
+    const [Characters, setCharacterstsOpen] = useState(true);
+    const [Coments, setCommentsOpen] = useState(false);
+
+    const [type, setType] = useState(null);
+    const [error, setError] = useState("");
+
+    const stars = [1, 2, 3, 4, 5];
+    const full = "/svg/star_full.svg";
+    const empty = "/svg/star_empty.svg";
+
+    const [rating, setRating] = useState(0);
+    const [hover, setHover] = useState(0);
+
+    const [caption, setCaption] = useState("")
+
+    const fetchComs = async () => {
+        try {
+            const res = await fetch(
+                `http://localhost:5000/comments/${id}`
+            );
+
+            if (!res.ok) throw new Error("Failed to fetch comments");
+
+            const data = await res.json();
+            setComents(data || []);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (user === null) {
+            setErrorMessage("Для того, щоб залишити відгук, ви маєте бути авторизованим")
+            return
+        }
+        const body = {
+            user_id: user.id,
+            book_id: book.id,
+            caption,
+            sub_rate: rating,
+            date_post: new Date().toISOString()
+        };
+
+        try {
+            const res = await fetch("http://localhost:5000/new_comm", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+
+            if (!res.ok) throw new Error("Failed to post comment");
+
+            const data = await res.json();
+            setCaption("");
+            setRating(0);
+            fetchComs();
+
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
 
     function TextMore({ text }) {
         const [expanded, setExpanded] = useState(false);
@@ -54,26 +125,64 @@ export default function BookDetails() {
                     return;
                 }
 
-                const normalized = normalizeBook(data);
-                setBook(normalized);
+                setBook(normalizeBook(data));
             } catch (err) {
                 console.error(err);
                 navigate("/404");
-            } finally {
-                setLoading(false);
             }
         };
 
         fetchData();
+        fetchComs();
     }, [id]);
+
 
     if (loading) return <h2>Loading book...</h2>;
     if (!book) return <h2>Book not found</h2>;
 
+    const total = coments.reduce((sum, coments) => sum + coments.sub_rate, 0);
+    const avg = total / coments.length;
+
+
     return (
         <div className="author-details">
-            <img src={`/img/covers/${book.cover}`} alt={book.title} className="book-cover" />
+            <div className="book-container">
+                <img src={`/img/covers/${book.cover}`} alt={book.title} className="book_cover" />
+                <div className="for_stars">
+                    {stars.map((star) => (
+                        <img
+                            key={`total_${star}`}
+                            className="staar"
+                            src={
+                                avg > 0 ?
+                                    avg >= star
+                                        ? "/svg/star_full.svg"
+                                        : avg + 0.5 >= star
+                                            ? "/svg/star_half.svg"
+                                            : "/svg/star_empty.svg"
+                                    : "/svg/star_full.svg"
+
+                            }
+                            alt="star"
+                        />
+                    ))}
+                    <div className="star_num">
+                        {Number.isNaN(avg) ? "5.0" : avg}
+                    </div>
+                </div>
+            </div>
             <ul className="types">
+                <button
+                    className="buying"
+                    disabled={!type}
+                    onClick={() => {
+                        if (!type) {
+                            setError("Оберіть тип товару");
+                            return;
+                        }
+                    }}
+                >
+                    Купити</button> <div style={{ fontSize: "20px", color: "#68676a", margin: "0" }}>{!type && "Оберіть тип книги"}</div>
                 {book.types.map((t) => (
                     <li key={t.book_type_id} className="type_item">
                         <label>
@@ -83,6 +192,10 @@ export default function BookDetails() {
                                 value={t.book_type_id}
                                 className="hidden_checkbox"
                                 disabled={t.availability == "Нема"}
+                                onChange={() => {
+                                    setType(t.book_type_id);
+                                    setError("");
+                                }}
                             />
                             <div className="checkbox_button">
                                 <div>{t.type}</div>
@@ -101,33 +214,115 @@ export default function BookDetails() {
             <div className="info">
                 <h1>{book.title}</h1>
                 <TextMore text={book.annotation} />
+                <div className="menu">
+                    <button className={`button_click ${Characters}`} onClick={() => {
+                        setCharacterstsOpen(true);
+                        setCommentsOpen(false);
+                    }}>Характеристики</button>
+                    <button className={`button_click ${Coments}`} onClick={() => {
+                        setCharacterstsOpen(false);
+                        setCommentsOpen(true);
+                    }}>Коментарі</button>
+                </div>
+                {Characters && (
+                    <div className="second_info">
+                        <ul className="books" key="books">
+                            <li className="option_book">
+                                <NavLink to={`/author/details/${book.author.id}`}>
+                                    <div className="au_short_info">Автор</div>
+                                    <div className="au_short_info" style={{ color: "#254C69" }}>
+                                        {book.author.first_name} {book.author.last_name}
+                                    </div>
+                                </NavLink>
+                            </li>
 
-                <ul className="books">
-                    <li className="option_book">
-                        <NavLink to={`/author/details/${book.author.id}`}>
-                            <div className="au_short_info">Автор</div>
-                            <div className="au_short_info" style={{ color: "#254C69" }}>
-                                {book.author.first_name} {book.author.last_name}
+                            <li className="option_book">
+                                <div className="au_short_info">Рік</div>
+                                <div className="au_short_info">{book.year}</div>
+                            </li>
+
+                            <li className="option_book">
+                                <div className="au_short_info">Видавництво</div>
+                                <div className="au_short_info">{book.publisher}</div>
+                            </li>
+
+                            <li className="option_book">
+                                <div className="au_short_info">Мова</div>
+                                <div className="au_short_info">{book.language}</div>
+                            </li>
+                        </ul>
+                    </div>
+                )}
+                {Coments && (
+                    <div className="second_info">
+                        <ul className="coments_ul">
+                            {coments.length === 0 && (
+                                <li className="nocom">Наразі немає коментарів</li>
+                            )}
+
+                            {coments.map((c, index) => {
+                                const formatted = new Date(c.date_post).toLocaleDateString("uk-UA");
+                                return (
+                                    <li className="top" key={`${c.id}_${index}`}>
+                                        <div className="comentator">
+                                            <div className="com_log">{c.login}</div>
+                                            {stars.map((star) => (
+                                                <img
+                                                    key={`star_${c.id}_${star}`}
+                                                    className="staar"
+                                                    src={
+                                                        c.sub_rate >= star
+                                                            ? "/svg/star_full.svg"
+                                                            : "/svg/star_empty.svg"
+                                                    }
+                                                    alt="star"
+                                                />
+                                            ))}
+                                            <div className="date">{formatted}</div>
+                                        </div>
+                                        <div className="coments">
+                                            {c.caption}
+                                        </div>
+                                    </li>
+                                )
+                            })}
+                        </ul>
+
+                        <form className="sender" onSubmit={handleSubmit}>
+                            <div className="all-in">
+                                <h2>Ваша оцінка:</h2>
+                                {stars.map((star) => (
+                                    <img
+                                        key={`new_star_${star}`}
+                                        className="staar"
+                                        onMouseEnter={() => setHover(star)}
+                                        onMouseLeave={() => setHover(0)}
+                                        onClick={() => setRating(star)}
+                                        src={star <= (hover || rating) ? full : empty}
+                                        alt="star rating"
+                                    />
+                                ))}
                             </div>
-                        </NavLink>
-                    </li>
-
-                    <li className="option_book">
-                        <div className="au_short_info">Рік</div>
-                        <div className="au_short_info">{book.year}</div>
-                    </li>
-
-                    <li className="option_book">
-                        <div className="au_short_info">Видавництво</div>
-                        <div className="au_short_info">{book.publisher}</div>
-                    </li>
-
-                    <li className="option_book">
-                        <div className="au_short_info">Мова</div>
-                        <div className="au_short_info">{book.language}</div>
-                    </li>
-                </ul>
-
+                            <textarea
+                                placeholder="Додати коментар..."
+                                className="coments new_coms"
+                                id="com_new"
+                                rows={1}
+                                maxLength={300}
+                                value={caption}
+                                onChange={(e) => setCaption(e.target.value)}
+                            />
+                            <button className="send" disabled={!caption.trim() || rating === 0} type="submit">
+                                Надіслати
+                            </button>
+                            {errorMessage && (
+                                <div className="error-message">
+                                    {errorMessage}
+                                </div>
+                            )}
+                        </form>
+                    </div>
+                )}
             </div>
         </div>
     );

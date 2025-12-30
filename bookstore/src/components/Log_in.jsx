@@ -1,8 +1,7 @@
 import React, { useRef, useState } from "react";
-import Loger from "./Loger";
 import "../pages/css/loger.css"
-export default function Log_in({ isAuth, onClose, onLoginSuccess, onLogout, onRegister, onLogin, authError }) {
-
+import Loger from "./Loger";
+export default function Log_in({ isAuth, onLogin, onRegister, onLogout, authError }) {
     const [isOpen, setLogerOpen] = useState(false);
     const [mode, setmode] = useState("login");
 

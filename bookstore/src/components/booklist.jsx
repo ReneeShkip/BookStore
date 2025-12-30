@@ -77,12 +77,13 @@ export default function BooksList({ category, categoryName }) {
                                     className="catalog_li"
                                     key={`${category}_${book.ID}`}
                                 >
-                                    <NavLink to={`/book/details/${book.ID}`}>
+                                    <NavLink to={`/book/details/${book.ID}`} className="navlink">
                                         <img
                                             src={`/img/covers/${book.cover}`}
                                             alt={book.title}
                                             className={`book-cover ${book.type}`}
                                         />
+                                        <div className="overlay"></div>
                                         <div className="short_info">{book.title}</div>
                                         <div className="short_info">
                                             {book.price} грн

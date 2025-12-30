@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "./components/header";
 import Footer from "./components/Footer";
-
+import { UserContext } from "./context/UserContext";
 import { Outlet } from "react-router-dom";
 
 function App() {
@@ -10,9 +10,18 @@ function App() {
   const [user, setUser] = useState(null);
   const [authError, setAuthError] = useState("");
 
+  // Перевірка localStorage при завантаженні
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      const parsedUser = JSON.parse(savedUser);
+      setUser(parsedUser);
+      setIsAuth(true); // Також встанови isAuth
+    }
+  }, []);
+
   const handleRegister = async (userData) => {
     setAuthError("");
-
     try {
       const res = await fetch("http://localhost:5000/sign_up", {
         method: "POST",
@@ -20,35 +29,46 @@ function App() {
         body: JSON.stringify(userData)
       });
 
+      // ✅ Спочатку парсимо JSON
       const data = await res.json();
 
+      // ✅ Потім перевіряємо статус
       if (!res.ok) {
-        throw new Error(data.error || "Помилка реєстрації");
+        throw new Error(data.error || data.details || "Помилка реєстрації");
       }
 
-      setUser(data);
+      // ✅ Зберігаємо тільки потрібні дані користувача
+      const user = {
+        id: data.id,
+        login: data.login,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        phone_number: data.phone_number,
+        role: data.role
+      };
+
+      setUser(user);
       setIsAuth(true);
-      return data;
+      localStorage.setItem('user', JSON.stringify(user));
+
+      return user;
     } catch (err) {
+      console.error("Registration error:", err);
       setAuthError(err.message);
       throw err;
     }
   };
 
-  const handleLogin = async (loginData) => {
+  const handleLogin = async (form) => {
     try {
       const res = await fetch("http://localhost:5000/log_in", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(loginData)
+        body: JSON.stringify(form)
       });
 
-      let data = {};
-      try {
-        data = await res.json();
-      } catch {
-        data = { error: "Сервер не відповів JSON" };
-      }
+      const data = await res.json();
+
       if (!res.ok) {
         setAuthError(data.error || "Невірний логін або пароль");
         return;
@@ -56,44 +76,36 @@ function App() {
 
       setUser(data);
       setIsAuth(true);
+      localStorage.setItem('user', JSON.stringify(data)); // Виправлено: data замість userData
       setAuthError("");
     } catch (err) {
-      console.error("Помилка запиту:", err);
+      console.error(err);
       setAuthError("Помилка з'єднання з сервером");
     }
-  };
-
-
-
-
-  const handleLoginSuccess = (userData) => {
-    setIsAuth(true);
-    setUser(userData);
   };
 
   const handleLogout = () => {
     setIsAuth(false);
     setUser(null);
+    localStorage.removeItem('user');
   };
 
   return (
-    <div className="app-layout">
-      <Header
-        isAuth={isAuth}
-        user={user}
-        onLogin={handleLogin}
-        onLogout={handleLogout}
-        onRegister={handleRegister}
-        authError={authError}
-      />
-
-      <main className="content">
+    <UserContext.Provider value={{
+      user,
+      isAuth,
+      handleLogin,
+      handleRegister,
+      handleLogout,
+      authError
+    }}>
+      <Header />
+      <main>
         <Outlet />
       </main>
-
       <Footer />
-    </div>
-  )
+    </UserContext.Provider>
+  );
 }
 
 export default App;

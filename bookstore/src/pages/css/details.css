@@ -6,12 +6,65 @@
 
     align-items: flex-start;
 
-    img {
-        width: 14%;
+    .staar {
+        border: none;
+        width: 23px;
+        margin-left: 5px;
+    }
+}
+
+.book-container {
+    width: 20%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+
+    .book_cover {
+        width: 90%;
         border-radius: 30px;
         border: rgba(71, 123, 145, 1) 8px solid;
     }
+
+    .for_stars {
+
+        margin-top: 20px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+
+        .staar {
+            width: 30px;
+        }
+    }
 }
+
+.star_num {
+    font-size: 37px;
+    color: #254C69;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.buying {
+    background: rgba(71, 123, 145, 1);
+    color: #ECE4C0;
+    border-radius: 10px;
+    width: 70%;
+    margin-bottom: 20px;
+}
+
+.buying:hover {
+    background: #254C69;
+}
+
+.buying:disabled,
+.buying:disabled:hover {
+    background: rgb(132, 148, 155);
+    cursor: default;
+    margin-bottom: 0;
+}
+
 
 .info {
     width: 50%;
@@ -30,6 +83,7 @@ h4 {
     font-weight: lighter;
     font-size: 24px;
     margin: 0;
+
 }
 
 p {
@@ -56,6 +110,7 @@ p {
     display: flex;
     width: 80%;
     flex-direction: column;
+    z-index: 10;
 
     h2 {
         font-size: 30px;
@@ -86,7 +141,7 @@ p {
 }
 
 .option_book:nth-child(even) {
-    background-color: #f8f6d89e;
+    background-color: #f7f4d0;
 }
 
 .morebtn {
@@ -103,6 +158,9 @@ p {
 
 .types {
     list-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .hidden_checkbox {
@@ -115,19 +173,25 @@ p {
     cursor: pointer;
     user-select: none;
     display: inline-block;
-    background-color: rgba(155, 189, 162, 1);
+    background-color: rgba(155, 189, 162, 0.397);
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.241);
+    border: 2px solid rgba(155, 189, 162, 1);
+    width: 110px;
+
+    h4 {
+        color: #c16969;
+    }
 }
 
 .hidden_checkbox:disabled+.checkbox_button {
     cursor: default;
     color: rgba(0, 0, 0, 0.656);
-    background-color: rgba(240, 255, 243, 0.63);
+    background-color: rgb(205 206 206 / 63%);
     border: rgb(187, 187, 187) 2px solid;
 }
 
 .hidden_checkbox:checked+.checkbox_button {
-    background-color: #254C69;
+    background-color: #184f79b0;
     color: white;
     border-color: #254C69;
 }
@@ -138,4 +202,149 @@ p {
     padding: 15px;
     font-size: 30px;
 
+}
+
+.coments_ul {
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    width: 100%;
+    padding: 0;
+    z-index: 10;
+}
+
+.top {
+    font-size: 35px;
+    color: #254C69;
+    list-style: none;
+}
+
+.coments {
+    background-color: rgb(94, 144, 167);
+    color: white;
+    font-size: 25px;
+    padding: 10px;
+    border-radius: 20px;
+    max-width: 90%;
+    margin-left: 30px;
+    width: fit-content;
+
+}
+
+.new_coms {
+    font-size: 22px;
+    font-weight: bold;
+    outline: none;
+    border: 2px solid #5c8cae48;
+    background-color: #cddfec98;
+    border-radius: 10px;
+    color: #254C69;
+    width: 60%;
+    height: auto;
+    resize: vertical;
+    font-family: 'Myfont';
+    font-weight: lighter;
+}
+
+.new_coms:focus {
+    border: 2px solid #5c8cae98;
+    background-color: #cddfec;
+}
+
+.menu,
+.sender {
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.menu {
+    border-bottom: 2px solid rgb(155, 189, 162);
+    margin-top: 0;
+}
+
+.second_info {
+    width: 100%;
+    background: linear-gradient(180deg,
+            rgb(155, 189, 162),
+            rgba(110, 150, 120, 0));
+}
+
+.nocom {
+    font-size: 30px;
+    text-align: center;
+    color: #000000aa;
+}
+
+.button_click:hover,
+.true {
+    border-bottom: #254C69 2px solid;
+    padding-bottom: 0;
+    color: #254C69;
+}
+
+.comentator {
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.com_log {
+    width: 80px;
+}
+
+.send {
+    background-color: #254C69;
+    height: 20px;
+    color: #ECE4C0;
+    padding: 20px 15px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+}
+
+.send:hover {
+    background: rgba(71, 123, 145, 1);
+}
+
+.all-in {
+
+    width: 100%;
+    padding-left: 15px;
+    display: flex;
+    margin-bottom: 10px;
+
+    .staar {
+        width: 30px;
+        border-radius: 0;
+        cursor: pointer;
+    }
+
+    h2 {
+        margin: 0;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.732);
+    }
+}
+
+.error-message {
+    font-size: 25px;
+    width: 100%;
+    text-align: center;
+}
+
+.date {
+    font-size: 22px;
+    color: #254c6985;
+    margin-left: 30px;
+}
+
+.send:disabled {
+    background-color: #254c6999;
+    cursor: default;
 }

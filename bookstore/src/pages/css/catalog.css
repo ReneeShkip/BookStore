@@ -3,7 +3,6 @@
     color: #ECE4C0;
     padding: 0 15px;
     font-size: 25px;
-    margin-bottom: 20px;
 }
 
 .preview {
@@ -72,6 +71,18 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 15px;
+    border-radius: 12px;
+    margin: 5px 0;
+}
+
+.show-more:hover {
+    background: rgba(71, 123, 145, 1);
+}
+
+.catalog_li:hover {
+    box-shadow: 0 0 7px #254c69cc;
+    background-color: #254c693c;
 }
 
 .catalog_section {

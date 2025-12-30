@@ -13,12 +13,10 @@ export default function Publishers() {
                 return res.json();
             })
             .then(data => {
-                console.log("Publishers loaded:", data);
                 setPubl(data);
                 setLoading(false);
             })
             .catch(err => {
-                console.error("Error loading publishers:", err);
                 setError(err.message);
                 setLoading(false);
             });
@@ -42,9 +40,7 @@ export default function Publishers() {
                             src={`/img/publishers/${item.photo}`}
                             alt={item.name}
                         />
-                        <div className="overlay">
-                            {item.name}
-                        </div>
+                        <div className="overlay"></div>
                     </div>
 
                 ))}

@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2");
+const { use } = require("react");
 
 const app = express();
 
@@ -198,7 +199,6 @@ app.get("/authors_books", (req, res) => {
     const params = [];
 
     if (bookId) {
-        // Підзапит для book_id
         conditions.push("bt.book_id = (SELECT book_id FROM book_type WHERE id = ?)");
         params.push(bookId);
     }
@@ -237,35 +237,42 @@ app.post("/log_in", (req, res) => {
             if (password != user.password) {
                 return res.status(401).json({ error: "Невірний логін або пароль" });
             }
-            res.json({ login: user.login, role: user.role });
+            res.json({ id: user.id, login: user.login, role: user.role });
         }
     );
 });
 
 
 app.post("/sign_up", async (req, res) => {
-    console.log("Body received:", req.body);
-
     const { login, password, first_name, last_name, phone_number, role } = req.body || {};
 
     if (!login || !password) {
-        console.log("Login or password missing");
-        return res.status(400).send("Login or password missing");
+        return res.status(400).json({ error: "Login or password missing" });
     }
 
     const query = `INSERT INTO users(first_name, last_name, login, password, phone_number, role) VALUES(?, ?, ?, ?, ?, ?)`;
 
     db.query(query, [first_name, last_name, login, password, phone_number, role], (err, results) => {
         if (err) {
-            console.error("SQL error:", err);
-            return res.status(500).send("Server error");
+            return res.status(500).json({ error: "Server error", details: err.message });
         }
-        res.json({ message: "User registered successfully", login });
+
+        res.json({
+            message: "User registered successfully",
+            login,
+            id: results.insertId,
+            first_name,
+            last_name,
+            phone_number,
+            role
+        });
     });
 });
 
 
 app.get("/filteredbooks", (req, res) => {
+    const isSearch = req.query.search === "true";
+    const q = req.query.q?.trim() || "";
 
     const genres = req.query.genres
         ? req.query.genres.split(",").map(Number)
@@ -311,6 +318,17 @@ app.get("/filteredbooks", (req, res) => {
 
     const values = [];
 
+    if (q) {
+        sql += `
+            AND (
+                b.title LIKE ?
+                OR a.first_name LIKE ?
+                OR a.last_name LIKE ?
+            )
+        `;
+        values.push(`%${q}%`, `%${q}%`, `%${q}%`);
+    }
+
     if (genres.length) {
         sql += ` AND bg.genre_id IN (${genres.map(() => "?").join(",")})`;
         values.push(...genres);
@@ -344,5 +362,56 @@ app.get("/filteredbooks", (req, res) => {
         res.json(results);
     });
 });
+
+
+app.get("/comments/:bookTypeId", (req, res) => {
+    const { bookTypeId } = req.params;
+
+    const sql = `
+        SELECT c.id, c.date_post, c.caption, c.sub_rate, c.user_id, u.login
+        FROM comments c
+        JOIN users u ON u.id = c.user_id
+        WHERE c.book_id = (SELECT book_id FROM book_type WHERE id = ?)
+        ORDER BY c.date_post DESC
+    `;
+
+    db.query(sql, [bookTypeId], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "DB error" });
+        }
+        res.json(results);
+    });
+});
+
+app.post("/new_comm", (req, res) => {
+
+    const { user_id, book_id, caption, sub_rate, date_post } = req.body || {};
+
+    if (!user_id || !book_id || !caption || !sub_rate) {
+        return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    let mysqlDate;
+    if (date_post) {
+        mysqlDate = new Date(date_post).toISOString().slice(0, 19).replace('T', ' ');
+    } else {
+        mysqlDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    }
+
+    const query = `
+        INSERT INTO comments(user_id, book_id, caption, sub_rate, date_post)
+        VALUES (?, ?, ?, ?, ?)
+    `;
+
+    db.query(query, [user_id, book_id, caption, sub_rate, mysqlDate], (err, results) => {
+        if (err) {
+            console.error("SQL error:", err);
+            return res.status(500).json({ error: "Database error", details: err.message });
+        }
+        res.json({ message: "Comment added!", comment: { caption, sub_rate } });
+    });
+});
+
 
 app.listen(5000, () => console.log("Server running on port 5000"));

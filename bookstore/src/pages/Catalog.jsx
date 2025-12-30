@@ -15,7 +15,6 @@ export default function Catalog() {
                 return res.json();
             })
             .then(data => {
-                console.log("Categories loaded:", data);
                 setCategories(data);
                 setLoading(false);
             })
