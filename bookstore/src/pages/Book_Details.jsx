@@ -5,7 +5,7 @@ import { normalizeBook } from "../utils/normalizebooks";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { CartContext } from "../context/CartContext";
-//import Loading from "./loading.jsx";
+import Loading from "./Loading";
 
 
 export default function BookDetails() {
@@ -191,22 +191,16 @@ export default function BookDetails() {
             <ul className="types">
 
                 {!hasAvailabile ?
-
                     <button
                         className="buying"
                     > Очікую</button>
                     :
-
                     <button
                         className="buying"
                         disabled={!bookType}
                         onClick={handleAddToCart}
-                    >
-                        Купити
-                    </button>
+                    >Купити</button>
                 }
-
-
                 <div style={{ fontSize: "20px", color: "#68676a", margin: "0" }}>{!bookType && "Оберіть тип книги"}</div>
                 {book.types.map((t) => (
                     <li key={t.book_type_id} className="type_item">

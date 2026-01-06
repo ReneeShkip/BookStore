@@ -2,13 +2,14 @@ import { useContext, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { CartContext } from "../context/CartContext";
-import Loading from "./loading.jsx";
+import Loading from "./Loading.jsx";
 import './css/cart.css';
 
 function Cart() {
     const { isAuth } = useContext(UserContext);
     const {
         cart,
+        setCart,
         loading,
         updateQuantity,
         removeItem,
@@ -120,12 +121,20 @@ function Cart() {
                                                 className="quant"
                                                 min={1}
                                                 value={item.quantity}
-                                                onChange={e =>
-                                                    updateQuantity(
-                                                        item.id,
-                                                        Math.max(1, Number(e.target.value))
-                                                    )
-                                                }
+                                                onChange={e => {
+                                                    const value = Math.max(1, Number(e.target.value));
+
+                                                    setCart(prev =>
+                                                        prev.map(i =>
+                                                            i.id === item.id
+                                                                ? { ...i, quantity: value }
+                                                                : i
+                                                        )
+                                                    );
+                                                }}
+                                                onBlur={() => {
+                                                    updateQuantity(item.id, item.quantity);
+                                                }}
                                             /> шт
                                         </div>
                                         <div className="info-cart price">

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import './css/style.css';
 import './css/catalog.css';
-import Loading from "./loading.jsx";
+import Loading from "./Loading";
 import BooksList from '../components/Booklist';
 
 export default function Catalog() {

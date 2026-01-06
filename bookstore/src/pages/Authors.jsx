@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import Loading from "./loading.jsx";
+import Loading from "./Loading";
 
 import "../pages/css/author.css"
 

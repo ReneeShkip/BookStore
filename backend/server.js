@@ -537,7 +537,7 @@ app.put("/cart/:id", (req, res) => {
     const query = `
         UPDATE cart 
         SET quantity = ? 
-        WHERE ID = ? AND user_id = ?
+        WHERE book_id = ? AND user_id = ?
     `;
 
     db.query(query, [quantity, id, user_id], (err, results) => {
@@ -553,13 +553,19 @@ app.delete("/cart/:id", (req, res) => {
     const { id } = req.params;
     const { user_id } = req.query;
 
-    const query = `DELETE FROM cart WHERE id = ? AND user_id = ?`;
+    const query = `DELETE FROM cart
+            WHERE book_id = ? and user_id = ?
+            AND id NOT IN (
+                SELECT cart_id FROM order_books
+            );
+`;
 
     db.query(query, [id, user_id], (err) => {
         if (err) {
             console.error("SQL error:", err);
             return res.status(500).json({ error: "Server error" });
         }
+        console.log(id, user_id);
         res.json({ message: "Item removed" });
     });
 });
@@ -567,7 +573,11 @@ app.delete("/cart/:id", (req, res) => {
 app.delete("/cart", (req, res) => {
     const { user_id } = req.query;
 
-    const query = `DELETE FROM cart WHERE user_id = ?`;
+    const query = `DELETE FROM cart
+        WHERE user_id = ?
+        AND id NOT IN (
+            SELECT cart_id FROM order_books
+        );`;
 
     db.query(query, [user_id], (err, result) => {
         if (err) {
@@ -584,26 +594,27 @@ app.get("/history", (req, res) => {
 
     const query = `
         SELECT
-            c.id AS cart_id,
-            bt.id AS ID,
-            b.title,
-            b.cover,
-            bt.price,
-            a.first_name,
-            a.last_name,
-            c.quantity,
-            t.type,
-            o.date_and_time
-        FROM orders o
-        JOIN order_books ob ON ob.order_id = o.id
-        JOIN cart c ON ob.cart_id = c.id
-        JOIN book_type bt ON bt.id = c.book_id
-        JOIN books b ON b.id = bt.book_id
-        JOIN authors a ON a.id = b.author
-        JOIN users u ON u.id = c.user_id
-        JOIN type t ON t.id = bt.type_id
-        WHERE u.id = ?
-        ORDER BY o.date_and_time DESC;
+        o.id as id,
+        c.id AS cart_id,
+        bt.id AS ID,
+        b.title,
+        bt.price,
+        concat(a.first_name, ' ', a.last_name) as author,
+        c.quantity,
+        t.type,
+        s.status,
+        o.date_and_time
+    FROM orders o
+    JOIN order_books ob ON ob.order_id = o.id
+    JOIN cart c ON ob.cart_id = c.id
+    JOIN book_type bt ON bt.id = c.book_id
+    JOIN books b ON b.id = bt.book_id
+    JOIN authors a ON a.id = b.author
+    JOIN users u ON u.id = c.user_id
+    JOIN type t ON t.id = bt.type_id
+    JOIN statuses s ON s.id = o.status_id
+    WHERE u.id = ?
+    ORDER BY o.date_and_time DESC;
     `;
 
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Header from "./components/header";
+import Chat from "./components/chat";
 import Footer from "./components/Footer";
 import { Outlet } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
@@ -26,7 +27,7 @@ function App() {
       <CartProvider>
         <div className="page">
           <Header />
-
+          <Chat />
           <main>
             <Outlet />
           </main>

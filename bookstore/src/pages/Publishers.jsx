@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "../pages/css/publisher.css"
-import Loading from "./loading.jsx";
+import Loading from "./Loading";
 
 
 export default function Publishers() {

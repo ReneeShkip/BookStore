@@ -11,6 +11,10 @@
         width: 23px;
         margin-left: 5px;
     }
+
+    img {
+        max-width: 300px;
+    }
 }
 
 .book-container {
@@ -211,6 +215,7 @@ p {
     width: 100%;
     padding: 0;
     z-index: 10;
+    list-style: none;
 }
 
 .top {

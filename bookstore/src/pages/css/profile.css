@@ -13,7 +13,7 @@
 }
 
 .profile_info_section {
-    margin-top: 5px;
+    margin-top: 15px;
 }
 
 .edit {
@@ -66,4 +66,40 @@
     input:focus {
         border-color: #477B91;
     }
+}
+
+.item {
+    background-color: #9ABDA2;
+    font-size: 25px;
+    width: 70vw;
+    border-radius: 0 0 10px 12px;
+    margin-bottom: 12px;
+}
+
+.order-date {
+    background: linear-gradient(to right, #254C69, #9BBDA2);
+    color: #ECE4C0;
+    padding: 0 17px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.status {
+    color: #254C69;
+}
+
+.book-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #254C69;
+
+    div {
+        width: 15%;
+        text-align: center;
+    }
+}
+
+.book-item:last-child {
+    border-bottom: none;
 }

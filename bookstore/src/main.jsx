@@ -10,7 +10,6 @@ import NotFound from "./pages/notfound.jsx";
 import SetBooks from "./pages/Set_of_books.jsx";
 import MyProfile from "./pages/My_Profile.jsx";
 import Cart from "./pages/Cart.jsx";
-import Loading from "./pages/loading.jsx";
 
 const router = createBrowserRouter([
   {

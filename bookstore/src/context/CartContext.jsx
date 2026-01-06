@@ -69,12 +69,6 @@ export function CartProvider({ children }) {
                     quantity: qty
                 })
             });
-
-            setCart(prev =>
-                prev.map(item =>
-                    item.ID === id ? { ...item, quantity: qty } : item
-                )
-            );
         } catch (err) {
             console.error(err);
         }
@@ -120,6 +114,7 @@ export function CartProvider({ children }) {
     return (
         <CartContext.Provider value={{
             cart,
+            setCart,
             loading,
             cartItemsCount,
             addToCart,

@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { useState, useEffect } from "react";
 import Loading from "./Loading.jsx";
+import { normalizeHistory } from "../utils/normalizedhistory";
 import { UserContext } from "../context/UserContext";
 import './css/profile.css';
 
@@ -50,10 +51,10 @@ export default function MyProfile() {
 
         fetch(`http://localhost:5000/history?user_id=${user.id}`)
             .then(res => res.json())
-            .then(data => setHistory(data))
+            .then(data => setHistory(normalizeHistory(data)))
             .catch(console.error);
     }, [user]);
-
+    console.log(history)
     if (!user) {
         return (
             <div className="cart_page">
@@ -92,11 +93,8 @@ export default function MyProfile() {
 
                         try {
                             await editInfo(updatedUser);
-
                             setUser(updatedUser);
-
                             localStorage.setItem('user', JSON.stringify(updatedUser));
-
                             alert("Дані оновлено");
                         } catch (e) {
                             setError(e.message);
@@ -105,15 +103,36 @@ export default function MyProfile() {
                     }}>
                         Змінити
                     </button>
+                    <button className="deleter">Видалити обліковий запис</button>
                 </div>
             </div>
             <div className="profile_info_section">
-                <h2>Історія</h2>
-                {history.map(item => (
-                    <div key={`order_${item.cart_id}`} className="item">
-                        {item.title}
-                    </div>
-                ))}
+                <h2>Історія замовлень</h2>
+                {history.map(order => {
+                    const formatted = new Date(order.date).toLocaleDateString("uk-UA");
+                    return (
+                        <div key={`order_${order.id}`} className="item">
+                            <div className="order-date">
+                                Дата замовлення: {formatted}
+                                <div className="status">
+                                    Статус: {order.status}
+                                </div>
+                            </div>
+
+                            <div className="order">
+                                {order.books.map(book => (
+                                    <div key={`book_${book.book_id}`} className="book-item">
+                                        <div className="book-title">{book.title}</div>
+                                        <div className="book-author">{book.author}</div>
+                                        <div className="book-quantity">{book.quantity} шт</div>
+                                        <div className="book-price">{book.price} грн</div>
+                                        <div className="book-type">{book.type}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )
+                })}
             </div>
         </div>
     );
