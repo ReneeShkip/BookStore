@@ -10,6 +10,8 @@ export default function Loger({ onLogin, authError, onClose, mode, onRegister })
     const [last_name, setlName] = useState("");
     const [phone_number, setPhone] = useState("");
     const [role, setRole] = useState("client");
+    const [city, setCity] = useState("");
+    const [email, setEmail] = useState("");
     const [errors, setErrors] = useState({});
 
     const [form, setForm] = useState({
@@ -48,7 +50,7 @@ export default function Loger({ onLogin, authError, onClose, mode, onRegister })
 
     const handleRegist = (e) => {
         e.preventDefault();
-        onRegister({ login, first_name, last_name, password, phone_number, role });
+        onRegister({ login, first_name, last_name, password, phone_number, role, email, city });
     };
     const handleSubmit = async (e) => {
         e.preventDefault();

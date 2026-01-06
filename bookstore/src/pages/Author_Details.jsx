@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import Loading from "./loading.jsx";
 import "../pages/css/details.css";
 
 export default function AuthorDetails() {
@@ -42,9 +43,8 @@ export default function AuthorDetails() {
         fetchData();
     }, [id]);
 
-    if (loading) return <h2>Loading author...</h2>;
+    if (loading) return <Loading />;
     if (!author) return <h2>Author not found</h2>;
-
     return (
         <div className="author-details">
             <img src={`/img/authors/${author.photo}`} alt="" />

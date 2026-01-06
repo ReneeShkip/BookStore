@@ -1,29 +1,33 @@
 import React, { useEffect, useState, useRef } from "react";
-import { NavLink, Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, Link } from "react-router-dom";
 import Log_in from "./Log_in";
 import Subfilters from "./subfilters";
 import { useContext } from "react";
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "../context/UserContext.jsx";
+import { CartContext } from "../context/CartContext";
 
 export default function Header() {
-    const { isAuth, handleLogin, handleRegister, handleLogout, authError } = useContext(UserContext);
+    const { user, isAuth, handleLogin, handleRegister, handleLogout, authError } = useContext(UserContext);
+    const { cartItemsCount } = useContext(CartContext);
     const navigate = useNavigate();
+
     const [menuOpen, setMenuOpen] = useState(false);
     const [filterOpen, setFilterOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const [searchText, setSearchText] = useState("");
+    const [cart, setCart] = useState([]);
+    const [loading, setLoading] = useState(true);
+
     const searchBoxRef = useRef(null);
     const searchToggleRef = useRef(null);
     const searchInputRef = useRef(null);
     const filterref = useRef(null);
     const menuRef = useRef(null);
     const btnRef = useRef(null);
-    const [searchRes, setSearchRes] = useState([]);
-    const goSearchRef = useRef(null);
+
     function applySearch() {
         navigate("/books/searched", { state: { searchText } });
     }
-
     const toggleMenu = () => setMenuOpen(prev => !prev);
 
     useEffect(() => {
@@ -85,7 +89,23 @@ export default function Header() {
         });
     }
 
+    useEffect(() => {
+        if (isAuth && user?.id) {
+            fetchCart();
+        }
+    }, [isAuth, user?.id]);
 
+    const fetchCart = async () => {
+        if (!isAuth || !user?.id) return;
+
+        try {
+            const res = await fetch(`http://localhost:5000/cart?user_id=${user.id}`);
+            const data = await res.json();
+            setCart(data);
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     const [filters, setFilters] = useState({
         genres: [],
@@ -96,6 +116,17 @@ export default function Header() {
             max: ""
         }
     });
+
+
+    useEffect(() => {
+        if (isAuth && user?.id) {
+            fetch(`http://localhost:5000/cart?user_id=${user.id}`)
+                .then(res => res.json())
+                .then(data => setCart(data))
+                .catch(console.error)
+                .finally(() => setLoading(false));
+        }
+    }, [isAuth, user?.id]);
 
     return (
         <header>
@@ -154,7 +185,13 @@ export default function Header() {
                 </button>
 
                 <button>
-                    <img src="/svg/cart.svg" alt="cart" />
+                    <NavLink to="/cart" className="cart-link">
+                        <img src="/svg/cart.svg" alt="cart" />
+                        {cartItemsCount > 0 && (
+                            <span className="cart-badge">{cartItemsCount}</span>
+                        )}
+                    </NavLink>
+
                 </button>
 
                 <button

@@ -8,6 +8,9 @@ import AuthorDetails from "./pages/Author_Details";
 import BookDetails from "./pages/Book_Details.jsx";
 import NotFound from "./pages/notfound.jsx";
 import SetBooks from "./pages/Set_of_books.jsx";
+import MyProfile from "./pages/My_Profile.jsx";
+import Cart from "./pages/Cart.jsx";
+import Loading from "./pages/loading.jsx";
 
 const router = createBrowserRouter([
   {
@@ -20,7 +23,9 @@ const router = createBrowserRouter([
       { path: "publishers", element: <Publishers /> },
       { path: "author/details/:id", element: <AuthorDetails /> },
       { path: "book/details/:id", element: <BookDetails /> },
-      { path: "/books/filteredbooks", element: <SetBooks /> },
+      { path: "/books/filteredbooks/:category?", element: <SetBooks /> },
+      { path: "/profile", element: <MyProfile /> },
+      { path: "/cart", element: <Cart /> },
       { path: "*", element: <NotFound /> },
     ],
   },

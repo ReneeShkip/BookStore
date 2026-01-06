@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import "../pages/css/loger.css"
 import Loger from "./Loger";
+import { NavLink } from "react-router-dom";
 export default function Log_in({ isAuth, onLogin, onRegister, onLogout, authError }) {
     const [isOpen, setLogerOpen] = useState(false);
     const [mode, setmode] = useState("login");
@@ -20,7 +21,7 @@ export default function Log_in({ isAuth, onLogin, onRegister, onLogout, authErro
 
             {isAuth ? (
                 <div>
-                    <button>Особистий кабінет</button>
+                    <NavLink to={"/profile"}>Особистий кабінет</NavLink>
                     <button onClick={onLogout}>Вийти</button>
                 </div>
             ) : (

@@ -4,7 +4,7 @@
     flex-wrap: wrap;
     justify-content: center;
     margin: 10px 0;
-    background-color: rgba(155, 189, 162, 1);
+    background-color: #9BBDA2;
     border-radius: 20px;
     align-items: center;
     justify-content: space-around;
@@ -17,6 +17,11 @@
 
     .book_li {
         margin: 10px;
+        width: 180px;
+
+        a {
+            height: 280px;
+        }
     }
 }
 

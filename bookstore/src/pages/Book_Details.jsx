@@ -4,6 +4,9 @@ import "../pages/css/details.css";
 import { normalizeBook } from "../utils/normalizebooks";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
+import { CartContext } from "../context/CartContext";
+//import Loading from "./loading.jsx";
+
 
 export default function BookDetails() {
     const { user } = useContext(UserContext);
@@ -13,13 +16,12 @@ export default function BookDetails() {
     const navigate = useNavigate();
     const [coments, setComents] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
-
     const [Characters, setCharacterstsOpen] = useState(true);
     const [Coments, setCommentsOpen] = useState(false);
 
-    const [type, setType] = useState(null);
+    const [bookType, setBookTypeId] = useState(null);
+    const [avType, setAvType] = useState(false);
     const [error, setError] = useState("");
-
     const stars = [1, 2, 3, 4, 5];
     const full = "/svg/star_full.svg";
     const empty = "/svg/star_empty.svg";
@@ -28,6 +30,17 @@ export default function BookDetails() {
     const [hover, setHover] = useState(0);
 
     const [caption, setCaption] = useState("")
+
+    const { addToCart } = useContext(CartContext);
+
+    const handleAddToCart = () => {
+        if (!bookType) {
+            alert("Оберіть тип книги");
+            return;
+        }
+
+        addToCart(bookType, 1);
+    };
 
     const fetchComs = async () => {
         try {
@@ -79,7 +92,6 @@ export default function BookDetails() {
         }
     };
 
-
     function TextMore({ text }) {
         const [expanded, setExpanded] = useState(false);
         const lim = 200;
@@ -99,6 +111,9 @@ export default function BookDetails() {
         );
     }
 
+
+
+
     const limit = 2;
     const offset = 0;
 
@@ -108,7 +123,7 @@ export default function BookDetails() {
         const fetchData = async () => {
             try {
                 const res = await fetch(
-                    `http://localhost:5000/authors_books?bookId=${id}&limit=${limit}&offset=${offset}`
+                    `http://localhost:5000/authors_books?book_id=${id}&limit=${limit}&offset=${offset}`
                 );
 
                 if (res.status === 404) {
@@ -136,13 +151,14 @@ export default function BookDetails() {
         fetchComs();
     }, [id]);
 
-
-    if (loading) return <h2>Loading book...</h2>;
+    if (loading) return <Loading />;
     if (!book) return <h2>Book not found</h2>;
+    const hasAvailabile = book.types.some(t => t.availability === "Є")
 
     const total = coments.reduce((sum, coments) => sum + coments.sub_rate, 0);
-    const avg = total / coments.length;
-
+    const avg = coments.length
+        ? (total / coments.length).toFixed(1)
+        : "5.0";
 
     return (
         <div className="author-details">
@@ -165,37 +181,43 @@ export default function BookDetails() {
                             }
                             alt="star"
                         />
+
                     ))}
                     <div className="star_num">
-                        {Number.isNaN(avg) ? "5.0" : avg}
+                        {avg}
                     </div>
                 </div>
             </div>
             <ul className="types">
-                <button
-                    className="buying"
-                    disabled={!type}
-                    onClick={() => {
-                        if (!type) {
-                            setError("Оберіть тип товару");
-                            return;
-                        }
-                    }}
-                >
-                    Купити</button> <div style={{ fontSize: "20px", color: "#68676a", margin: "0" }}>{!type && "Оберіть тип книги"}</div>
+
+                {!hasAvailabile ?
+
+                    <button
+                        className="buying"
+                    > Очікую</button>
+                    :
+
+                    <button
+                        className="buying"
+                        disabled={!bookType}
+                        onClick={handleAddToCart}
+                    >
+                        Купити
+                    </button>
+                }
+
+
+                <div style={{ fontSize: "20px", color: "#68676a", margin: "0" }}>{!bookType && "Оберіть тип книги"}</div>
                 {book.types.map((t) => (
                     <li key={t.book_type_id} className="type_item">
                         <label>
                             <input
                                 name="type"
                                 type="radio"
-                                value={t.book_type_id}
+                                value={t.type_id}
                                 className="hidden_checkbox"
                                 disabled={t.availability == "Нема"}
-                                onChange={() => {
-                                    setType(t.book_type_id);
-                                    setError("");
-                                }}
+                                onChange={() => setBookTypeId(t.book_type_id)}
                             />
                             <div className="checkbox_button">
                                 <div>{t.type}</div>

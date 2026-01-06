@@ -1,3 +1,5 @@
+require('dotenv').config();
+const nodemailer = require('nodemailer');
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2");
@@ -5,12 +7,28 @@ const { use } = require("react");
 
 const app = express();
 
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
+
+transporter.verify((error, success) => {
+    if (error) {
+        console.log('❌ Email connection error:', error);
+    } else {
+        console.log('✅ Email server is ready');
+    }
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
     origin: "http://localhost:5173",
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type"]
 }));
 
@@ -166,7 +184,7 @@ app.get("/publishers", (req, res) => {
 });
 
 app.get("/authors_books", (req, res) => {
-    const { bookId, authorId, limit = 20, offset = 0 } = req.query;
+    const { book_id, authorId, limit = 20, offset = 0 } = req.query;
 
     let query = `
         SELECT DISTINCT
@@ -198,9 +216,9 @@ app.get("/authors_books", (req, res) => {
     const conditions = [];
     const params = [];
 
-    if (bookId) {
+    if (book_id) {
         conditions.push("bt.book_id = (SELECT book_id FROM book_type WHERE id = ?)");
-        params.push(bookId);
+        params.push(book_id);
     }
 
     if (authorId) {
@@ -226,7 +244,7 @@ app.post("/log_in", (req, res) => {
     const { login, password } = req.body;
 
     db.query(
-        `SELECT id, login, password, role FROM users WHERE login = ? LIMIT 1`,
+        `SELECT id, login, first_name, last_name, phone_number, password, role, email, city FROM users WHERE login = ? LIMIT 1`,
         [login],
         async (err, results) => {
             if (err) return res.status(500).send("Server error");
@@ -237,7 +255,16 @@ app.post("/log_in", (req, res) => {
             if (password != user.password) {
                 return res.status(401).json({ error: "Невірний логін або пароль" });
             }
-            res.json({ id: user.id, login: user.login, role: user.role });
+            res.json({
+                id: user.id,
+                login: user.login,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                phone_number: user.phone_number,
+                role: user.role,
+                email: user.email,
+                city: user.city
+            });
         }
     );
 });
@@ -364,8 +391,8 @@ app.get("/filteredbooks", (req, res) => {
 });
 
 
-app.get("/comments/:bookTypeId", (req, res) => {
-    const { bookTypeId } = req.params;
+app.get("/comments/:bookType", (req, res) => {
+    const { bookType } = req.params;
 
     const sql = `
         SELECT c.id, c.date_post, c.caption, c.sub_rate, c.user_id, u.login
@@ -375,7 +402,7 @@ app.get("/comments/:bookTypeId", (req, res) => {
         ORDER BY c.date_post DESC
     `;
 
-    db.query(sql, [bookTypeId], (err, results) => {
+    db.query(sql, [bookType], (err, results) => {
         if (err) {
             console.error(err);
             return res.status(500).json({ error: "DB error" });
@@ -412,6 +439,210 @@ app.post("/new_comm", (req, res) => {
         res.json({ message: "Comment added!", comment: { caption, sub_rate } });
     });
 });
+
+app.get("/cart", (req, res) => {
+    const user_id = req.query.user_id;
+
+    if (!user_id) {
+        return res.status(400).json({ error: "No user_id provided" });
+    }
+
+    const query = `
+       SELECT
+        c.id,
+        bt.id AS id,
+        b.title,
+        b.cover,
+        bt.price,
+        a.first_name,
+        a.last_name,
+        c.quantity,
+        t.type
+        FROM cart c
+        JOIN book_type bt ON bt.id = c.book_id
+        JOIN books b ON b.id = bt.book_id
+        JOIN authors a ON a.id = b.author
+        JOIN type t ON t.id = bt.type_id
+        LEFT JOIN order_books ob ON c.id = ob.cart_id
+        WHERE ob.cart_id IS NULL and c.user_id = ?
+        ORDER BY c.id DESC;
+    `;
+
+    db.query(query, [user_id], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "DB error" });
+        }
+        res.json(results);
+    });
+});
+
+app.post("/add_cart", (req, res) => {
+
+    const { user_id, book_id, quantity } = req.body;
+
+    if (!user_id || !book_id) {
+        return res.status(400).json({
+            error: "Missing required fields",
+            received: { user_id, book_id }
+        });
+    }
+
+    const checkQuery = `
+        SELECT * FROM cart 
+        WHERE user_id = ? AND book_id = ?
+    `;
+
+    db.query(checkQuery, [user_id, book_id], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Server error" });
+        }
+
+        if (results.length > 0) {
+            const newQuantity = results[0].quantity + (quantity || 1);
+
+            db.query(
+                `UPDATE cart SET quantity = ? WHERE id = ?`,
+                [newQuantity, results[0].id],
+                (err) => {
+                    if (err) {
+                        console.error(err);
+                        return res.status(500).json({ error: "Server error" });
+                    }
+                    res.json({ message: "Quantity updated" });
+                }
+            );
+        } else {
+            db.query(
+                `INSERT INTO cart (user_id, book_id, quantity)
+                 VALUES (?, ?, ?)`,
+                [user_id, book_id, quantity || 1],
+                (err) => {
+                    if (err) {
+                        console.error(err);
+                        return res.status(500).json({ error: "Server error" });
+                    }
+                    res.json({ message: "Added to cart" });
+                }
+            );
+        }
+    });
+});
+
+app.put("/cart/:id", (req, res) => {
+    const { id } = req.params;
+    const { user_id, quantity } = req.body;
+
+    const query = `
+        UPDATE cart 
+        SET quantity = ? 
+        WHERE ID = ? AND user_id = ?
+    `;
+
+    db.query(query, [quantity, id, user_id], (err, results) => {
+        if (err) {
+            console.error("SQL error:", err);
+            return res.status(500).json({ error: "Server error" });
+        }
+        res.json({ message: "Quantity updated" });
+    });
+});
+
+app.delete("/cart/:id", (req, res) => {
+    const { id } = req.params;
+    const { user_id } = req.query;
+
+    const query = `DELETE FROM cart WHERE id = ? AND user_id = ?`;
+
+    db.query(query, [id, user_id], (err) => {
+        if (err) {
+            console.error("SQL error:", err);
+            return res.status(500).json({ error: "Server error" });
+        }
+        res.json({ message: "Item removed" });
+    });
+});
+
+app.delete("/cart", (req, res) => {
+    const { user_id } = req.query;
+
+    const query = `DELETE FROM cart WHERE user_id = ?`;
+
+    db.query(query, [user_id], (err, result) => {
+        if (err) {
+            console.error("SQL error:", err);
+            return res.status(500).json({ error: "Server error" });
+        }
+
+        res.json({ deleted: result.affectedRows });
+    });
+});
+
+app.get("/history", (req, res) => {
+    const user_id = Number(req.query.user_id);
+
+    const query = `
+        SELECT
+            c.id AS cart_id,
+            bt.id AS ID,
+            b.title,
+            b.cover,
+            bt.price,
+            a.first_name,
+            a.last_name,
+            c.quantity,
+            t.type,
+            o.date_and_time
+        FROM orders o
+        JOIN order_books ob ON ob.order_id = o.id
+        JOIN cart c ON ob.cart_id = c.id
+        JOIN book_type bt ON bt.id = c.book_id
+        JOIN books b ON b.id = bt.book_id
+        JOIN authors a ON a.id = b.author
+        JOIN users u ON u.id = c.user_id
+        JOIN type t ON t.id = bt.type_id
+        WHERE u.id = ?
+        ORDER BY o.date_and_time DESC;
+    `;
+
+
+    db.query(query, [user_id], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "DB error" });
+        }
+        res.json(results);
+    });
+});
+
+app.post("/edit_info", (req, res) => {
+    const { id, first_name, last_name, login, phone_number, email, city } = req.body;
+
+    if (!id) {
+        return res.status(400).json({ error: "User id is required" });
+    }
+
+    db.query(
+        `UPDATE users
+         SET first_name = ?, last_name = ?, login = ?, phone_number = ?, email = ?, city = ?
+         WHERE id = ?`,
+        [first_name, last_name, login, phone_number, email, city, id],
+        (err, result) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ error: "Server error" });
+            }
+
+            if (result.affectedRows === 0) {
+                return res.status(404).json({ error: "User not found" });
+            }
+
+            res.json({ message: "User info updated" });
+        }
+    );
+});
+
 
 
 app.listen(5000, () => console.log("Server running on port 5000"));

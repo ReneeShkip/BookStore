@@ -1,5 +1,6 @@
 import { useLocation, NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 import "../pages/css/filtered_books.css"
 
@@ -8,12 +9,34 @@ export default function SetBooks() {
     const mode = state?.mode;
     const filters = state?.filters;
     const searchText = state?.searchText;
-
+    const { category } = useParams();
     const [allbooks, setAllBooks] = useState([]);
     const [sortBy, setSortBy] = useState("");
 
+
     useEffect(() => {
-        if (!mode) return;
+        fetch(`http://localhost:5000/books?category=${category}&limit=1000&offset=0`)
+            .then(res => {
+                if (res.status === 404) {
+                    return <NotFound />
+                }
+                if (!res.ok) {
+                    throw new Error("Server error");
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data) {
+                    setAllBooks(data);
+                }
+            })
+            .catch(err => console.error(err));
+    }, [category]);
+
+
+
+    useEffect(() => {
+        if (!mode || category) return;
 
         const params = new URLSearchParams();
 

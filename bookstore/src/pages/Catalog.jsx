@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import './css/style.css';
 import './css/catalog.css';
+import Loading from "./loading.jsx";
 import BooksList from '../components/Booklist';
 
 export default function Catalog() {
@@ -25,9 +26,7 @@ export default function Catalog() {
             });
     }, []);
 
-    if (loading) {
-        return <div className="main-page">Завантаження категорій...</div>;
-    }
+    if (loading) return <Loading />;
 
     if (error) {
         return <div className="main-page">Помилка: {error}</div>;

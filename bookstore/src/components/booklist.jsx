@@ -7,10 +7,10 @@ import '../pages/css/catalog.css';
 export default function BooksList({ category, categoryName }) {
     const [books, setBooks] = useState([]);
     const [page, setPage] = useState(0);
-    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [hasNextPage, setHasNextPage] = useState(true);
-    const pageSize = 7;
+    let pageSize = 6;
+    if (page === 3) { pageSize = 5 }
 
     useEffect(() => {
         fetch(`http://localhost:5000/books?category=${category}&limit=${pageSize + 1}&offset=${page * pageSize}`)
@@ -26,7 +26,8 @@ export default function BooksList({ category, categoryName }) {
             .then(data => {
                 if (data) {
                     setBooks(data);
-                    setHasNextPage(data.length > pageSize);
+                    setHasNextPage((data.length > pageSize) && (page < 3));
+                    console.log(page, hasNextPage)
                 }
             })
             .catch(err => console.error(err));
@@ -43,25 +44,18 @@ export default function BooksList({ category, categoryName }) {
     const nextPage = () => setPage(prev => prev + 1);
     const prevPage = () => setPage(prev => Math.max(prev - 1, 0));
 
-    if (loading) {
-        return (
-            <div className="catalog">
-                <div className="catalog_section">
-                    <div className="category">{categoryName || category}</div>
-                    <div>Завантаження...</div>
-                </div>
-            </div>
-        );
-    }
-
     if (error) {
         return <NotFound />;
     }
 
     return (
         <div className="catalog">
-            <button onClick={prevPage} disabled={page === 0}>
-                <img src="svg/prev.svg" alt="Назад" />
+
+            <button onClick={prevPage} disabled={page === 0} className="nav-btn-prev">
+                <img
+                    src={page !== 0 ? "/svg/prev.svg" : "/svg/prev-dis.svg"}
+                    alt="Назад"
+                />
             </button>
 
             <div className="catalog_section">
@@ -84,25 +78,33 @@ export default function BooksList({ category, categoryName }) {
                                             className={`book-cover ${book.type}`}
                                         />
                                         <div className="overlay"></div>
-                                        <div className="short_info">{book.title}</div>
+                                        <div className="short_info">
+                                            {book?.title?.length > 14
+                                                ? book.title.slice(0, 14) + "..."
+                                                : book?.title}
+                                        </div>
                                         <div className="short_info">
                                             {book.price} грн
                                         </div>
                                     </NavLink>
                                 </li>
                             ))}
-                            {(books.length < 8 || page === 3) && (
-                                <button className="show-more">
+                            {(books.length < 7 || page === 3) && (
+                                <NavLink to={`/books/filteredbooks/${category}`} className="show-more">
                                     Ще
-                                </button>
+                                </NavLink>
+
                             )}
                         </ul>
                     </>
                 )}
             </div>
 
-            <button onClick={nextPage} disabled={!hasNextPage}>
-                <img src="svg/next.svg" alt="Вперед" />
+            <button onClick={nextPage} disabled={!hasNextPage} className="nav-btn-next">
+                <img
+                    src={hasNextPage ? "/svg/next.svg" : "/svg/next-dis.svg"}
+                    alt="Вперед"
+                />
             </button>
         </div>
     );

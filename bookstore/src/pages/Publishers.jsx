@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import "../pages/css/publisher.css"
+import Loading from "./loading.jsx";
+
 
 export default function Publishers() {
     const [publ, setPubl] = useState([]);
@@ -22,9 +24,7 @@ export default function Publishers() {
             });
     }, []);
 
-    if (loading) {
-        return <div className="child-page">Завантаження Видавництв...</div>;
-    }
+    if (loading) return <Loading />;
 
     if (error) {
         return <div className="child-page">Помилка: {error}</div>;

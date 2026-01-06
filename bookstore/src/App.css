@@ -1,77 +1,106 @@
-  @font-face {
-    font-family: 'MyFont';
-    src: url('/fonts/east-sea-dokdo-cyrillic.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-  }
+@font-face {
+  font-family: 'MyFont';
+  src: url('/fonts/east-sea-dokdo-cyrillic.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
 
-  body {
-    margin: 0;
-    background-color: #ECE4C0;
-    font-family: 'MyFont', sans-serif;
-    width: 100%;
-  }
+body {
+  margin: 0;
+  background-color: #ECE4C0;
+  font-family: 'MyFont', sans-serif;
+  width: 100%;
+}
 
-  .app-layout {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-  .content {
-    flex: 1;
-  }
+.content {
+  flex: 1;
+}
 
-  header,
-  footer {
-    position: relative;
-    width: 100%;
-    margin: 0;
-    background-color: #254C69;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    font-size: 30px;
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-    button {
-      width: 60px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-    }
-
-  }
-
-  header {
-    position: sticky;
-    top: 0;
-    z-index: 500;
-  }
-
-  footer {
-    margin-top: 40px;
-    color: #ECE4C0;
-    justify-content: center;
-    flex-direction: column;
-
-    h2,
-    h4 {
-      margin: 20px;
-    }
-  }
+header,
+footer {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  background-color: #254C69;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  font-size: 30px;
 
   button {
-    background-color: rgba(155, 189, 162, 0);
-    border: none;
-    cursor: pointer;
-    font-family: 'MyFont', sans-serif;
-    font-size: 32px;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
   }
 
-  a {
-    display: flex;
-    gap: 30px;
-    color: #ECE4C0;
-    text-decoration: none;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 500;
+}
+
+footer {
+  margin-top: 40px;
+  color: #ECE4C0;
+  justify-content: center;
+  flex-direction: column;
+
+  h2,
+  h4 {
+    margin: 20px;
   }
+}
+
+button {
+  background-color: rgba(155, 189, 162, 0);
+  border: none;
+  cursor: pointer;
+  font-family: 'MyFont', sans-serif;
+  font-size: 32px;
+}
+
+a {
+  display: flex;
+  gap: 30px;
+  color: #ECE4C0;
+  text-decoration: none;
+}
+
+.cart-icon {
+  position: relative;
+  display: inline-block;
+}
+
+.cart-badge {
+  position: absolute;
+  top: 26px;
+  right: 210px;
+  min-width: 18px;
+  height: 18px;
+  padding: 2px;
+  background: #477B91;
+  color: #ece4c0;
+  font-size: 22px;
+  font-weight: 600;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}

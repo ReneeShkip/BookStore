@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import Loading from "./loading.jsx";
 
 import "../pages/css/author.css"
 
@@ -25,9 +26,7 @@ export default function Authors() {
             });
     }, []);
 
-    if (loading) {
-        return <div className="child-page">Завантаження авторів...</div>;
-    }
+    if (loading) return <Loading />;
 
     if (error) {
         return <div className="child-page">Помилка: {error}</div>;

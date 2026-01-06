@@ -68,7 +68,7 @@
 .button_item {
     padding: 6px 10px;
     border-radius: 8px;
-    background: rgba(71, 123, 145, 1);
+    background: #477B91;
     list-style-type: none;
     color: #ECE4C0;
     font-size: 24px;
@@ -88,7 +88,7 @@
 }
 
 .button_item {
-    background: rgba(155, 189, 162, 1);
+    background: #9BBDA2;
     color: #254C69;
 }
 
