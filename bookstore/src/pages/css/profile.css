@@ -47,7 +47,7 @@
     flex-wrap: wrap;
     justify-content: space-between;
     align-content: space-between;
-    background-color: rgb(55, 96, 114);
+    background-color: #376072;
     padding: 30px;
     border-radius: 15px;
 
@@ -102,4 +102,13 @@
 
 .book-item:last-child {
     border-bottom: none;
+}
+
+.deleter {
+    font-size: 22px;
+    color: #ECE4C0;
+}
+
+.deleter:hover {
+    color: #cdc18d;
 }

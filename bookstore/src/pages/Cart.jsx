@@ -162,7 +162,9 @@ function Cart() {
                 <h3>Обрано товарів: {total.totalCount}</h3>
                 <h3>Сума: {total.totalSum} грн</h3>
                 <button disabled={chosen.length === 0}>
-                    Оформити замовлення
+                    <NavLink to={"/order"}>
+                        Оформити замовлення
+                    </NavLink>
                 </button>
             </div>
         </div>

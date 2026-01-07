@@ -9,6 +9,7 @@ import BookDetails from "./pages/Book_Details.jsx";
 import NotFound from "./pages/notfound.jsx";
 import SetBooks from "./pages/Set_of_books.jsx";
 import MyProfile from "./pages/My_Profile.jsx";
+import Order from "./pages/Order.jsx";
 import Cart from "./pages/Cart.jsx";
 
 const router = createBrowserRouter([
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
       { path: "/books/filteredbooks/:category?", element: <SetBooks /> },
       { path: "/profile", element: <MyProfile /> },
       { path: "/cart", element: <Cart /> },
+      { path: "/order", element: <Order /> },
       { path: "*", element: <NotFound /> },
     ],
   },
