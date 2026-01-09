@@ -36,6 +36,7 @@
     justify-content: space-between;
     font-size: 30px;
     color: #9ABDA2;
+    position: relative;
 }
 
 .profile_info {
@@ -51,7 +52,8 @@
     padding: 30px;
     border-radius: 15px;
 
-    input {
+    input,
+    select {
         background-color: #477B91;
         border-radius: 10px;
         padding: 10px;
@@ -63,7 +65,8 @@
         outline: none;
     }
 
-    input:focus {
+    input:focus,
+    select:focus {
         border-color: #477B91;
     }
 }
@@ -111,4 +114,66 @@
 
 .deleter:hover {
     color: #cdc18d;
+}
+
+.order-page {
+    width: 90%;
+    display: flex;
+    justify-content: space-around;
+
+    .info {
+        width: 70%;
+        flex-direction: column;
+    }
+
+    .profile_info {
+        width: 55vw;
+    }
+
+    .prof {
+        font-size: 25px;
+        width: 330px;
+
+        input,
+        select {
+            font-size: 15px;
+            width: 70%;
+        }
+    }
+
+    .books-section {
+        background-color: #9ABDA2;
+        display: flex;
+        width: 25%;
+        flex-direction: column;
+        align-items: center;
+        height: 50%;
+        border-radius: 20px;
+        margin-top: 25px;
+
+        img {
+            width: 100px;
+            border-radius: 12px;
+            border: 5px solid #477B91;
+        }
+    }
+
+    .sub_book_info {
+        display: flex;
+        width: 100%;
+        justify-content: space-around;
+        align-items: center;
+    }
+}
+
+select,
+option,
+.dropdown-item {
+    font-family: sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+
+    div {
+        padding: 5px;
+    }
 }

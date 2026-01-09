@@ -4,6 +4,7 @@ import Loading from "./Loading.jsx";
 import { normalizeHistory } from "../utils/normalizedhistory";
 import { UserContext } from "../context/UserContext";
 import './css/profile.css';
+import CitySelector from "../components/city_selector.jsx";
 
 async function editInfo(user) {
     const response = await fetch("http://localhost:5000/edit_info", {
@@ -16,13 +17,11 @@ async function editInfo(user) {
         const error = await response.json();
         throw new Error(error.error || "Failed to update info");
     }
-
     return response.json();
 }
 
 export default function MyProfile() {
     const { user, setUser } = useContext(UserContext);
-
     const [login, setLogin] = useState(user?.login || "");
     const [first_name, setFirstName] = useState(user?.first_name || "");
     const [last_name, setLastName] = useState(user?.last_name || "");
@@ -32,6 +31,14 @@ export default function MyProfile() {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [allCities, setAllCities] = useState([]);
+    const [isOpen, setOpen] = useState(false)
+    const [cityRef, setCityRef] = useState(null);
+
+    const handleSelectCity = (option) => {
+        setCity(option.Description);
+        setCityRef(option.Ref);
+    };
 
     useEffect(() => {
         if (user) {
@@ -42,7 +49,6 @@ export default function MyProfile() {
             setCity(user.city);
             setEmail(user.email);
         }
-        console.log(user);
         setLoading(false);
     }, [user]);
 
@@ -54,13 +60,12 @@ export default function MyProfile() {
             .then(data => setHistory(normalizeHistory(data)))
             .catch(console.error);
     }, [user]);
-    console.log(history)
     if (!user) {
         return (
             <div className="cart_page">
                 <div className="alternative">
                     <img src="/svg/notAuth.svg" alt="not-auth" />
-                    <h2>Ви не авторизовані</h2>
+                    <h1>Ви не авторизовані</h1>
                 </div>
             </div>
         );
@@ -71,14 +76,18 @@ export default function MyProfile() {
     return (
         <div className="profil-page">
             <div className="profile_info_section">
-                <h2>Особиста інформація</h2>
+                <h1>Особиста інформація</h1>
                 <div className="profile_info">
                     <div className="prof">Логін<input value={login} onChange={e => setLogin(e.target.value)} /></div>
                     <div className="prof">Ім'я<input value={first_name} onChange={e => setFirstName(e.target.value)} /></div>
                     <div className="prof">Прізвище<input value={last_name} onChange={e => setLastName(e.target.value)} /></div>
                     <div className="prof">Телефон<input value={phone_number} onChange={e => setPhone(e.target.value)} /></div>
-                    <div className="prof">Місто<input value={city} onChange={e => setCity(e.target.value)} /></div>
-                    <div className="prof">Пошта<input value={email} onChange={e => setEmail(e.target.value)} /></div>
+                    <CitySelector
+                        city={city}
+                        setCity={setCity}
+                        onSelect={handleSelectCity}
+                    />
+                    <div className="prof">Ел. Пошта<input value={email} onChange={e => setEmail(e.target.value)} /></div>
                     <button className="edit" onClick={async () => {
                         const updatedUser = {
                             id: user.id,
@@ -107,7 +116,7 @@ export default function MyProfile() {
                 </div>
             </div>
             <div className="profile_info_section">
-                <h2>Історія замовлень</h2>
+                <h1>Історія замовлень</h1>
                 {history.map(order => {
                     const formatted = new Date(order.date).toLocaleDateString("uk-UA");
                     return (

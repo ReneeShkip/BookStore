@@ -185,3 +185,18 @@
         transform: translateY(0);
     }
 }
+
+.dropdown-item {
+    z-index: 100;
+    position: absolute;
+    top: 100%;
+    left: 92px;
+    padding: 10px;
+    border-radius: 10px;
+    width: 70%;
+    right: 0;
+    margin-top: 4px;
+    background-color: #477B91;
+    color: #ECE4C0;
+
+}

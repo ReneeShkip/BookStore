@@ -151,11 +151,29 @@
         border-radius: 10px;
         margin-top: 30px;
         padding: 7px;
+        cursor: pointer;
+    }
+
+    a {
+        color: #254C69;
     }
 
     button:hover {
         background-color: #254C69;
-        color: #ECE4C0;
+
+        a {
+            color: #ECE4C0;
+        }
+    }
+
+    button:disabled {
+        background-color: rgba(149, 172, 153, 0.715);
+        cursor: default;
+
+        a {
+            color: #254c69a8;
+            cursor: default;
+        }
     }
 }
 
