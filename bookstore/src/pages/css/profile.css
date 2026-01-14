@@ -2,7 +2,6 @@
 .profile_info_section {
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
     align-items: center;
 
     h2 {
@@ -43,13 +42,11 @@
     width: 52vw;
     display: flex;
     height: 220px;
-
+    justify-content: space-evenly;
+    align-content: space-around;
 
     flex-wrap: wrap;
-    justify-content: space-between;
-    align-content: space-between;
     background-color: #376072;
-    padding: 30px;
     border-radius: 15px;
 
     input,
@@ -122,12 +119,13 @@
     justify-content: space-around;
 
     .info {
-        width: 70%;
+        width: 60%;
         flex-direction: column;
+        margin-top: 20px;
     }
 
     .profile_info {
-        width: 55vw;
+        width: 100%;
     }
 
     .prof {
@@ -141,21 +139,68 @@
         }
     }
 
+    a {
+        color: #ece4c0c0;
+        font-size: 28px;
+    }
+
+    .roder {
+        background-color: #9ABDA2;
+        border-radius: 10px;
+        padding: 0 7px;
+        color: #254C69;
+    }
+
+    .roder:hover {
+        background-color: #5491ab;
+        color: #ECE4C0;
+    }
+
+    .checkout {
+        height: 150px;
+    }
+
     .books-section {
         background-color: #9ABDA2;
         display: flex;
-        width: 25%;
+        width: 80%;
         flex-direction: column;
         align-items: center;
-        height: 50%;
+        height: 230px;
         border-radius: 20px;
         margin-top: 25px;
 
-        img {
+        .cover {
             width: 100px;
             border-radius: 12px;
             border: 5px solid #477B91;
         }
+
+        h2 {
+            width: 100%;
+            text-align: center;
+            background: linear-gradient(to right, #254C69, #9BBDA2);
+            margin: 0 0 20px 0;
+        }
+    }
+
+    .total-price {
+        display: flex;
+        width: 90%;
+        justify-content: space-between;
+        color: #ECE4C0;
+
+
+        h2 {
+            font-size: 40px;
+            margin: 0;
+            font-weight: 200;
+        }
+    }
+
+    .checkout {
+        width: 100%;
+        margin-top: 20px;
     }
 
     .sub_book_info {
@@ -163,6 +208,17 @@
         width: 100%;
         justify-content: space-around;
         align-items: center;
+    }
+
+    .check {
+        width: 35%;
+    }
+
+    .book_card {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 }
 
@@ -175,5 +231,23 @@ option,
 
     div {
         padding: 5px;
+    }
+}
+
+.other {
+    height: 100px;
+}
+
+.alternative {
+    a {
+        background-color: #254C69;
+        padding: 10px;
+        border-radius: 15px;
+        font-size: 30px;
+    }
+
+    a:hover {
+        background-color: #9ABDA2;
+        color: #254C69;
     }
 }

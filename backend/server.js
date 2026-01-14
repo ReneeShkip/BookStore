@@ -450,7 +450,7 @@ app.get("/cart", (req, res) => {
     }
 
     const query = `
-       SELECT
+              SELECT
         c.id,
         bt.id AS id,
         b.title,
@@ -465,8 +465,7 @@ app.get("/cart", (req, res) => {
         JOIN books b ON b.id = bt.book_id
         JOIN authors a ON a.id = b.author
         JOIN type t ON t.id = bt.type_id
-        LEFT JOIN order_books ob ON c.id = ob.cart_id
-        WHERE ob.cart_id IS NULL and c.user_id = ?
+        WHERE c.in_order IS NULL and c.user_id = ?
         ORDER BY c.id DESC;
     `;
 
@@ -492,7 +491,7 @@ app.post("/add_cart", (req, res) => {
 
     const checkQuery = `
         SELECT * FROM cart 
-        WHERE user_id = ? AND book_id = ?
+        WHERE user_id = ? AND book_id = ? AND in_order IS NULL;
     `;
 
     db.query(checkQuery, [user_id, book_id], (err, results) => {
@@ -557,9 +556,7 @@ app.delete("/cart/:id", (req, res) => {
 
     const query = `DELETE FROM cart
             WHERE book_id = ? and user_id = ?
-            AND id NOT IN (
-                SELECT cart_id FROM order_books
-            );
+            AND in_order IS NULL
 `;
 
     db.query(query, [id, user_id], (err) => {
@@ -577,9 +574,7 @@ app.delete("/cart", (req, res) => {
 
     const query = `DELETE FROM cart
         WHERE user_id = ?
-        AND id NOT IN (
-            SELECT cart_id FROM order_books
-        );`;
+        AND in_order IS NULL`;
 
     db.query(query, [user_id], (err, result) => {
         if (err) {
@@ -607,8 +602,7 @@ app.get("/history", (req, res) => {
         s.status,
         o.date_and_time
     FROM orders o
-    JOIN order_books ob ON ob.order_id = o.id
-    JOIN cart c ON ob.cart_id = c.id
+    JOIN cart c ON c.in_order = o.id
     JOIN book_type bt ON bt.id = c.book_id
     JOIN books b ON b.id = bt.book_id
     JOIN authors a ON a.id = b.author
@@ -724,6 +718,115 @@ app.post("/city", async (req, res) => {
         res.status(500).json({ error: "Nova Poshta API error" });
     }
 });
+
+app.post("/make_order", (req, res) => {
+    const { date_and_time, posta_id, post_address, cart_ids } = req.body;
+
+    if (!posta_id || !post_address || !date_and_time || !cart_ids?.length) {
+        return res.status(400).json({
+            error: "Missing required fields"
+        });
+    }
+
+    const mysqlDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    db.query(
+        `INSERT INTO orders (date_and_time, posta_id, post_address, status_id)
+         VALUES (?, ?, ?, 1)`,
+        [mysqlDate, posta_id, post_address],
+        (err, result) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ error: "Insert order failed" });
+            }
+
+            const orderId = result.insertId;
+            db.query(
+                `UPDATE cart SET in_order = ? WHERE book_id IN (?)`,
+                [orderId, cart_ids],
+                (err2) => {
+                    if (err2) {
+                        console.error(err2);
+                        return res.status(500).json({ error: "Update cart failed" });
+                    }
+                    res.json({
+                        success: true,
+                        order_id: orderId
+                    });
+                }
+            );
+        }
+    );
+});
+
+app.get("/chatmsg", (req, res) => {
+    let query = `
+        SELECT
+        ch.id,
+        ch.chat_id,
+        u.id AS user_id,
+        u.first_name,
+        ch.text
+    FROM chat ch
+    JOIN users u ON u.id = ch.user_id    
+    `;
+
+    const user_id = Number(req.query.user_id);
+
+    const params = [];
+
+    if (user_id) {
+        query += "WHERE ch.chat_id = (select chat_id from chat where user_id = ? order by id desc limit 1)";
+        params.push(user_id);
+    }
+
+    query += "ORDER BY ch.id ASC";
+
+    db.query(query, params, (err, results) => {
+        if (err) {
+            console.error("SQL error:", err);
+            return res.status(500).json({ error: "Failed to fetch chats" });
+        }
+        res.json(results);
+        console.log(results)
+    });
+});
+
+app.post("/new_msg", (req, res) => {
+    const { chat_id, user_id, text } = req.body;
+
+    if (!user_id || !text) {
+        return res.status(400).json({ error: "Missing fields" });
+    }
+
+    const createMessage = (finalChatId) => {
+        db.query(
+            "INSERT INTO chat (chat_id, user_id, text) VALUES (?, ?, ?)",
+            [finalChatId, user_id, text],
+            (err, result) => {
+                if (err) return res.status(500).json(err);
+
+                res.json({
+                    message_id: result.insertId,
+                    chat_id: finalChatId
+                });
+            }
+        );
+    };
+
+    if (!chat_id) {
+        db.query(
+            "SELECT IFNULL(MAX(chat_id), 0) + 1 AS newChatId FROM chat",
+            (err, result) => {
+                if (err) return res.status(500).json(err);
+                createMessage(result[0].newChatId);
+            }
+        );
+    } else {
+        createMessage(chat_id);
+    }
+});
+
+
 
 
 app.listen(5000, () => console.log("Server running on port 5000"));

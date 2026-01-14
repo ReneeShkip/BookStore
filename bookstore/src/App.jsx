@@ -11,7 +11,6 @@ function App() {
 
   const [isAuth, setIsAuth] = useState(false);
   const [user, setUser] = useState(null);
-  const [authError, setAuthError] = useState("");
 
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
@@ -38,5 +37,4 @@ function App() {
     </UserProvider>
   );
 }
-
 export default App;

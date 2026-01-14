@@ -11,6 +11,7 @@ import SetBooks from "./pages/Set_of_books.jsx";
 import MyProfile from "./pages/My_Profile.jsx";
 import Order from "./pages/Order.jsx";
 import Cart from "./pages/Cart.jsx";
+import Returner from "./pages/Returner.jsx";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,7 @@ const router = createBrowserRouter([
       { path: "/profile", element: <MyProfile /> },
       { path: "/cart", element: <Cart /> },
       { path: "/order", element: <Order /> },
+      { path: "/returner", element: <Returner /> },
       { path: "*", element: <NotFound /> },
     ],
   },
