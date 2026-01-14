@@ -273,7 +273,6 @@ app.post("/log_in", (req, res) => {
     );
 });
 
-
 app.post("/sign_up", async (req, res) => {
     const { login, password, first_name, last_name, phone_number, role } = req.body || {};
 
@@ -588,10 +587,13 @@ app.delete("/cart", (req, res) => {
 
 app.get("/history", (req, res) => {
     const user_id = Number(req.query.user_id);
+    const params = [];
 
-    const query = `
+    let query = `
         SELECT
         o.id as id,
+        u.id AS user_id,
+        u.first_name as userer,
         c.id AS cart_id,
         bt.id AS ID,
         b.title,
@@ -599,7 +601,7 @@ app.get("/history", (req, res) => {
         concat(a.first_name, ' ', a.last_name) as author,
         c.quantity,
         t.type,
-        s.status,
+        s.id as status,
         o.date_and_time
     FROM orders o
     JOIN cart c ON c.in_order = o.id
@@ -609,12 +611,15 @@ app.get("/history", (req, res) => {
     JOIN users u ON u.id = c.user_id
     JOIN type t ON t.id = bt.type_id
     JOIN statuses s ON s.id = o.status_id
-    WHERE u.id = ?
-    ORDER BY o.date_and_time DESC;
     `;
 
+    if (user_id) {
+        query += "WHERE u.id = ? ORDER BY o.date_and_time DESC;"
+        params.push(user_id);
+    }
 
-    db.query(query, [user_id], (err, results) => {
+
+    db.query(query, params, (err, results) => {
         if (err) {
             console.error(err);
             return res.status(500).json({ error: "DB error" });
@@ -824,6 +829,26 @@ app.post("/new_msg", (req, res) => {
     } else {
         createMessage(chat_id);
     }
+});
+
+app.post("/stat", (req, res) => {
+    const { order_id, status_id } = req.body;
+
+    if (!order_id || !status_id) {
+        return res.status(400).json({ error: "Missing fields" });
+    }
+
+    db.query(
+        "update orders SET status_id = ? where id = ?",
+        [status_id, order_id],
+        (err, result) => {
+            if (err) return res.status(500).json(err);
+
+            res.json({
+                success: true
+            });
+        }
+    );
 });
 
 

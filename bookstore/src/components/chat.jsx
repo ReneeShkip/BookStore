@@ -105,20 +105,22 @@ export default function Chat() {
                                 :
                                 <div className="chat-style">Чат з консультантом</div>
                             }
-                            <div className="message system">
-                                <div className="inner">
-                                    Вітаємо, ви можете написати своє питання, і консультант відповість вам у робочі години
-                                </div>
-                            </div>
-                            <div>
-                                {chater.map(msg => (
-                                    <div
-                                        key={msg.id}
-                                        className={`message ${user.id === msg.user_id ? "mine" : "yours"}`}
-                                    >
-                                        <div className="inner">{msg.text}</div>
+                            <div className="flexer">
+                                <div className="message system">
+                                    <div className="inner">
+                                        Вітаємо, ви можете написати своє питання, і консультант відповість вам у робочі години
                                     </div>
-                                ))}
+                                </div>
+                                <div>
+                                    {chater.map(msg => (
+                                        <div
+                                            key={msg.id}
+                                            className={`message ${user.id === msg.user_id ? "mine" : "yours"}`}
+                                        >
+                                            <div className="inner">{msg.text}</div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                             <div className="wraper">
                                 <input
@@ -129,6 +131,7 @@ export default function Chat() {
                                     <img src="/svg/forward.svg" alt="send" />
                                 </button>
                             </div>
+
                         </div>
                     }
                 </div>

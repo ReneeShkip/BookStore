@@ -28,7 +28,7 @@
 }
 
 .prof {
-    width: 330px;
+    width: 45%;
     display: flex;
     display: flex;
     align-items: center;
@@ -38,12 +38,19 @@
     position: relative;
 }
 
+.probtns {
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+}
+
 .profile_info {
     width: 52vw;
     display: flex;
     height: 220px;
     justify-content: space-evenly;
     align-content: space-around;
+    padding: 10px 0;
 
     flex-wrap: wrap;
     background-color: #376072;
@@ -99,6 +106,83 @@
         text-align: center;
     }
 }
+
+.admin-cart__list {
+
+    p,
+    h3 {
+        margin: 0;
+        padding: 0;
+    }
+
+    .book-item {
+        border: none;
+        flex-direction: column;
+        width: 60%;
+        padding: 0;
+
+        div {
+            width: auto;
+            text-align: start;
+        }
+    }
+
+    .order:last-child {
+        border-bottom: none;
+    }
+
+    .order {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 2px solid #254C69;
+    }
+
+    select {
+        background-color: #9ABDA2;
+        border: none;
+        font-family: 'Myfont';
+        font-size: 25px;
+        font-weight: 400;
+        margin-left: 20px;
+    }
+
+    .book_ul {
+        display: flex;
+        list-style: none;
+        justify-content: space-between;
+        margin: 0;
+        padding: 0;
+
+        .book-author {
+            width: 30%;
+            font-size: 22px;
+            text-align: center;
+        }
+
+        .book-title {
+            width: 40%;
+        }
+
+        .book-quantity {
+            width: 15%;
+        }
+
+        .book-price {
+            width: 15%;
+        }
+    }
+
+    .main_order {
+        display: flex;
+        width: 32%;
+
+        div {
+            width: 50%;
+        }
+    }
+}
+
+
 
 .book-item:last-child {
     border-bottom: none;

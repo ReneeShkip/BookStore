@@ -1,5 +1,4 @@
-import { useContext } from "react";
-import { useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import Loading from "./Loading.jsx";
 import { normalizeHistory } from "../utils/normalizedhistory";
 import { UserContext } from "../context/UserContext";
@@ -31,8 +30,6 @@ export default function MyProfile() {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-    const [allCities, setAllCities] = useState([]);
-    const [isOpen, setOpen] = useState(false)
     const [cityRef, setCityRef] = useState(null);
 
     const handleSelectCity = (option) => {
@@ -88,61 +85,67 @@ export default function MyProfile() {
                         onSelect={handleSelectCity}
                     />
                     <div className="prof">Ел. Пошта<input value={email} onChange={e => setEmail(e.target.value)} /></div>
-                    <button className="edit" onClick={async () => {
-                        const updatedUser = {
-                            id: user.id,
-                            login,
-                            first_name,
-                            last_name,
-                            phone_number,
-                            city,
-                            email,
-                            role: user.role
-                        };
+                    {user.role != "admin" &&
+                        <div className="probtns">
+                            <div className="prof"><button className="edit" onClick={async () => {
+                                const updatedUser = {
+                                    id: user.id,
+                                    login,
+                                    first_name,
+                                    last_name,
+                                    phone_number,
+                                    city,
+                                    email,
+                                    role: user.role
+                                };
 
-                        try {
-                            await editInfo(updatedUser);
-                            setUser(updatedUser);
-                            localStorage.setItem('user', JSON.stringify(updatedUser));
-                            alert("Дані оновлено");
-                        } catch (e) {
-                            setError(e.message);
-                            alert("Помилка: " + e.message);
-                        }
-                    }}>
-                        Змінити
-                    </button>
-                    <button className="deleter">Видалити обліковий запис</button>
+                                try {
+                                    await editInfo(updatedUser);
+                                    setUser(updatedUser);
+                                    localStorage.setItem('user', JSON.stringify(updatedUser));
+                                    alert("Дані оновлено");
+                                } catch (e) {
+                                    setError(e.message);
+                                    alert("Помилка: " + e.message);
+                                }
+                            }}>
+                                Змінити
+                            </button></div>
+                            <button className="deleter">Видалити обліковий запис</button>
+                        </div>
+                    }
                 </div>
             </div>
-            <div className="profile_info_section">
-                <h1>Історія замовлень</h1>
-                {history.map(order => {
-                    const formatted = new Date(order.date).toLocaleDateString("uk-UA");
-                    return (
-                        <div key={`order_${order.id}`} className="item">
-                            <div className="order-date">
-                                Дата замовлення: {formatted}
-                                <div className="status">
-                                    Статус: {order.status}
+            {user.role != "admin" &&
+                <div className="profile_info_section">
+                    <h1>Історія замовлень</h1>
+                    {history.map(order => {
+                        const formatted = new Date(order.date).toLocaleDateString("uk-UA");
+                        return (
+                            <div key={`order_${order.id}`} className="item">
+                                <div className="order-date">
+                                    Дата замовлення: {formatted}
+                                    <div className="status">
+                                        Статус: {order.status}
+                                    </div>
+                                </div>
+
+                                <div className="order">
+                                    {order.books.map(book => (
+                                        <div key={`book_${book.book_id}`} className="book-item">
+                                            <div className="book-title">{book.title}</div>
+                                            <div className="book-author">{book.author}</div>
+                                            <div className="book-quantity">{book.quantity} шт</div>
+                                            <div className="book-price">{book.price} грн</div>
+                                            <div className="book-type">{book.type}</div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
-
-                            <div className="order">
-                                {order.books.map(book => (
-                                    <div key={`book_${book.book_id}`} className="book-item">
-                                        <div className="book-title">{book.title}</div>
-                                        <div className="book-author">{book.author}</div>
-                                        <div className="book-quantity">{book.quantity} шт</div>
-                                        <div className="book-price">{book.price} грн</div>
-                                        <div className="book-type">{book.type}</div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )
-                })}
-            </div>
+                        )
+                    })}
+                </div>
+            }
         </div>
     );
 }

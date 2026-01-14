@@ -12,6 +12,7 @@ import MyProfile from "./pages/My_Profile.jsx";
 import Order from "./pages/Order.jsx";
 import Cart from "./pages/Cart.jsx";
 import Returner from "./pages/Returner.jsx";
+import Cart_for_admins from "./pages/Cart_for_admins.jsx";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,7 @@ const router = createBrowserRouter([
       { path: "/profile", element: <MyProfile /> },
       { path: "/cart", element: <Cart /> },
       { path: "/order", element: <Order /> },
+      { path: "/admin/cart", element: <Cart_for_admins /> },
       { path: "/returner", element: <Returner /> },
       { path: "*", element: <NotFound /> },
     ],
