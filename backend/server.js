@@ -208,6 +208,7 @@ app.get("/authors_books", (req, res) => {
             a.last_name,
             a.biography,
             a.photo,
+            a.links,
             l.name as lang
         FROM book_type bt
         JOIN books b ON b.id = bt.book_id
@@ -248,7 +249,7 @@ app.post("/log_in", (req, res) => {
     const { login, password } = req.body;
 
     db.query(
-        `SELECT id, login, first_name, last_name, phone_number, password, role, email, city FROM users WHERE login = ? LIMIT 1`,
+        `SELECT id, login, first_name, last_name, phone_number, password, role, email, city FROM users WHERE login = ? and isActive = "T" LIMIT 1`,
         [login],
         async (err, results) => {
             if (err) return res.status(500).send("Server error");
@@ -563,7 +564,6 @@ app.delete("/cart/:id", (req, res) => {
             console.error("SQL error:", err);
             return res.status(500).json({ error: "Server error" });
         }
-        console.log(id, user_id);
         res.json({ message: "Item removed" });
     });
 });
@@ -594,6 +594,7 @@ app.get("/history", (req, res) => {
         o.id as id,
         u.id AS user_id,
         u.first_name as userer,
+        u.isActive,
         c.id AS cart_id,
         bt.id AS ID,
         b.title,
@@ -602,6 +603,7 @@ app.get("/history", (req, res) => {
         c.quantity,
         t.type,
         s.id as status,
+        s.status as name_status,
         o.date_and_time
     FROM orders o
     JOIN cart c ON c.in_order = o.id
@@ -614,10 +616,9 @@ app.get("/history", (req, res) => {
     `;
 
     if (user_id) {
-        query += "WHERE u.id = ? ORDER BY o.date_and_time DESC;"
+        query += "WHERE u.id = ? ORDER BY s.id;"
         params.push(user_id);
     }
-
 
     db.query(query, params, (err, results) => {
         if (err) {
@@ -725,9 +726,9 @@ app.post("/city", async (req, res) => {
 });
 
 app.post("/make_order", (req, res) => {
-    const { date_and_time, posta_id, post_address, cart_ids } = req.body;
+    const { date_and_time, posta_id, post_address, cart_ids, user_id } = req.body;
 
-    if (!posta_id || !post_address || !date_and_time || !cart_ids?.length) {
+    if (!posta_id || !post_address || !date_and_time || !user_id || !cart_ids?.length) {
         return res.status(400).json({
             error: "Missing required fields"
         });
@@ -746,8 +747,8 @@ app.post("/make_order", (req, res) => {
 
             const orderId = result.insertId;
             db.query(
-                `UPDATE cart SET in_order = ? WHERE book_id IN (?)`,
-                [orderId, cart_ids],
+                `UPDATE cart SET in_order = ? WHERE book_id IN (?) and user_id = ?`,
+                [orderId, cart_ids, user_id],
                 (err2) => {
                     if (err2) {
                         console.error(err2);
@@ -792,7 +793,6 @@ app.get("/chatmsg", (req, res) => {
             return res.status(500).json({ error: "Failed to fetch chats" });
         }
         res.json(results);
-        console.log(results)
     });
 });
 
@@ -851,7 +851,24 @@ app.post("/stat", (req, res) => {
     );
 });
 
+app.post("/del_ac", (req, res) => {
+    const { user_id } = req.body;
 
+    if (!user_id) {
+        return res.status(400).json({ error: "Missing fields" });
+    }
 
+    db.query(
+        "update users SET isActive = 2 where id = ?",
+        [user_id],
+        (err, result) => {
+            if (err) return res.status(500).json(err);
+
+            res.json({
+                success: true
+            });
+        }
+    );
+});
 
 app.listen(5000, () => console.log("Server running on port 5000"));

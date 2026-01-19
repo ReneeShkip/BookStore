@@ -335,3 +335,18 @@ option,
         color: #254C69;
     }
 }
+
+.deleted {
+    background-color: #cdc18d71;
+
+    select,
+    p,
+    h3 {
+        background-color: transparent;
+    }
+
+    .order-date {
+        background: linear-gradient(to right, #cdc18d, #DED5A9);
+        color: #254C69;
+    }
+}

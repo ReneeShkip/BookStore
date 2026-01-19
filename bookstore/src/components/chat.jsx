@@ -107,9 +107,11 @@ export default function Chat() {
                             }
                             <div className="flexer">
                                 <div className="message system">
-                                    <div className="inner">
-                                        Вітаємо, ви можете написати своє питання, і консультант відповість вам у робочі години
-                                    </div>
+                                    {user.role != "admin" &&
+                                        <div className="inner">
+                                            Вітаємо, ви можете написати своє питання, і консультант відповість вам у робочі години
+                                        </div>
+                                    }
                                 </div>
                                 <div>
                                     {chater.map(msg => (

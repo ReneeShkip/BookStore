@@ -16,7 +16,8 @@ export const normalizeBook = (rows) => {
             first_name: base.first_name,
             last_name: base.last_name,
             biography: base.biography,
-            photo: base.photo
+            photo: base.photo,
+            links: base.links
         },
         types: rows.map(r => ({
             book_type_id: r.book_type_id,

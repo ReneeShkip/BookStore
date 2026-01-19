@@ -11,6 +11,7 @@ function App() {
 
   const [isAuth, setIsAuth] = useState(false);
   const [user, setUser] = useState(null);
+  const [hover, setHover] = useState("/svg/to_top.svg")
 
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
@@ -25,12 +26,17 @@ function App() {
     <UserProvider>
       <CartProvider>
         <div className="page">
+          <div id="top"></div>
           <Header />
           <Chat />
           <main>
             <Outlet />
           </main>
-
+          <a href="#top" className="top">
+            <img
+              onMouseEnter={() => setHover("/svg/top_hover.svg")}
+              onMouseLeave={() => setHover("/svg/to_top.svg")}
+              src={hover} alt="Вгору" /></a>
           <Footer />
         </div>
       </CartProvider>

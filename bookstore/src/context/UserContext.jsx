@@ -8,18 +8,24 @@ export function UserProvider({ children }) {
     const [authError, setAuthError] = useState("");
 
     useEffect(() => {
-        const savedUser = localStorage.getItem('user');
-        if (savedUser) {
-            try {
-                const parsedUser = JSON.parse(savedUser);
+        const savedUser = localStorage.getItem("user");
+
+        if (!savedUser) return;
+
+        try {
+            const parsedUser = JSON.parse(savedUser);
+
+            if (parsedUser?.id) {
                 setUser(parsedUser);
                 setIsAuth(true);
-            } catch (err) {
-                console.error("Помилка парсингу user:", err);
-                localStorage.removeItem('user');
+            } else {
+                localStorage.removeItem("user");
             }
+        } catch {
+            localStorage.removeItem("user");
         }
     }, []);
+
 
     const handleRegister = async (userData) => {
         setAuthError("");

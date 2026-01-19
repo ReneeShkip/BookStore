@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
+import { normalizeAurhor } from "../utils/normalizedauthors";
 import { NavLink } from "react-router-dom";
 import Loading from "./Loading";
 import "../pages/css/details.css";
@@ -7,7 +8,6 @@ import "../pages/css/details.css";
 export default function AuthorDetails() {
     const { id } = useParams();
     const [author, setAuthor] = useState(null);
-    const [books, setBooks] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const limit = 7;
@@ -23,9 +23,8 @@ export default function AuthorDetails() {
                 const data = await res.json();
 
                 if (data.length > 0) {
-                    const { first_name, last_name, biography, photo } = data[0];
-                    setAuthor({ first_name, last_name, biography, photo });
-                    setBooks(data);
+                    const { first_name, last_name, biography, photo, links } = data[0];
+                    setAuthor(normalizeAurhor(data));
                 } else {
                     const authorRes = await fetch(`http://localhost:5000/authors?id=${id}`);
                     if (!authorRes.ok) throw new Error("Failed to fetch author");
@@ -51,23 +50,40 @@ export default function AuthorDetails() {
             <div className="info">
                 <h1>{author.first_name} {author.last_name}</h1>
                 <p>{author.biography}</p>
-                {books.length > 0 && (
+                {author.books.length > 0 && (
                     <div className="books">
+                        <div className="soc">
+                            <div>Соц. мережі</div>
+                            {author.links === "Відсутні" ? author.links :
+                                <a href={author.links} className="au_short_info link">
+
+                                    {author.links.includes("tiktok") ? "tiktok" : "instagram"}
+                                </a>}
+                        </div>
                         <h2>Твори цього автора</h2>
                         <ul className="listbook">
-                            {books.map(book => (
-                                <li className="option_book" key={book.book_type_id}>
-                                    <NavLink to={`/book/details/${book.book_type_id}`}>
-                                        <div className="au_short_info">{book.title}</div>
-                                        <div className="au_short_info">{book.type}</div>
-                                        <div className="au_short_info">{book.year}</div>
-                                    </NavLink>
+                            {author.books.map(book => (
+                                <li className="option_book" key={book.id}>
+                                    <div className="au_short_info">{book.title}</div>
+                                    <div className="au_short_info" key={0}>
+                                        {book.types.map(btype => (
+                                            <NavLink
+                                                key={btype.book_type_id}
+                                                to={`/book/details/${btype.book_type_id}`}
+                                            >
+                                                <div className="au_short_info">
+                                                    {btype.type}
+                                                </div>
+                                            </NavLink>
+                                        ))}
+                                    </div>
+                                    <div className="au_short_info">{book.year}</div>
                                 </li>
                             ))}
                         </ul>
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     )
 }

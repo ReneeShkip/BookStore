@@ -20,7 +20,7 @@ async function editInfo(user) {
 }
 
 export default function MyProfile() {
-    const { user, setUser } = useContext(UserContext);
+    const { user, setUser, handleLogout } = useContext(UserContext);
     const [login, setLogin] = useState(user?.login || "");
     const [first_name, setFirstName] = useState(user?.first_name || "");
     const [last_name, setLastName] = useState(user?.last_name || "");
@@ -31,6 +31,7 @@ export default function MyProfile() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [cityRef, setCityRef] = useState(null);
+    const user_id = user?.id;
 
     const handleSelectCity = (option) => {
         setCity(option.Description);
@@ -50,19 +51,45 @@ export default function MyProfile() {
     }, [user]);
 
     useEffect(() => {
-        if (!user) return;
-
+        if (!user || user.role === "admin") {
+            return;
+        }
         fetch(`http://localhost:5000/history?user_id=${user.id}`)
             .then(res => res.json())
             .then(data => setHistory(normalizeHistory(data)))
-            .catch(console.error);
+            .catch(console.error)
+            .finally(() => setLoading(false));
+
     }, [user]);
+
+
+    const deleteIt = async () => {
+
+        if (!user_id) return;
+
+        try {
+            const res = await fetch("http://localhost:5000/del_ac", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_id })
+            });
+
+            if (!res.ok) throw new Error("Помилка видалення");
+
+            const data = await res.json();
+            handleLogout();
+            localStorage.removeItem("token");
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     if (!user) {
         return (
             <div className="cart_page">
                 <div className="alternative">
                     <img src="/svg/notAuth.svg" alt="not-auth" />
-                    <h1>Ви не авторизовані</h1>
+                    <h2>Ви не авторизовані</h2>
                 </div>
             </div>
         );
@@ -111,7 +138,7 @@ export default function MyProfile() {
                             }}>
                                 Змінити
                             </button></div>
-                            <button className="deleter">Видалити обліковий запис</button>
+                            <button className="deleter" onClick={deleteIt}>Видалити обліковий запис</button>
                         </div>
                     }
                 </div>

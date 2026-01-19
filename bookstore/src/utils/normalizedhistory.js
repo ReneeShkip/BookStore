@@ -8,7 +8,7 @@ export const normalizeHistory = (rows) => {
             orders[r.id] = {
                 id: r.id,
                 date: r.date_and_time,
-                status: r.status,
+                status: r.name_status,
                 books: []
             };
         }
@@ -16,7 +16,7 @@ export const normalizeHistory = (rows) => {
             book_id: r.cart_id,
             title: r.title,
             author: r.author,
-            price: r.price,
+            price: r.price * r.quantity,
             type: r.type,
             quantity: r.quantity
         })

@@ -51,6 +51,7 @@
 
 .main-page {
     width: 99%;
+    margin-bottom: 40px;
 }
 
 .short_info {
@@ -68,6 +69,7 @@
         align-items: center;
         gap: 5px;
         height: 265px;
+        margin-bottom: 10px;
     }
 
     font-size: 25px;

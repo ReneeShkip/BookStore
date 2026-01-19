@@ -17,6 +17,10 @@
     }
 }
 
+.link {
+    width: auto !important;
+}
+
 .book-container {
     width: 20%;
     display: flex;
@@ -352,4 +356,11 @@ p {
 .send:disabled {
     background-color: #254c6999;
     cursor: default;
+}
+
+.soc {
+    font-size: 26px;
+    display: flex;
+    width: 50%;
+    justify-content: space-between
 }

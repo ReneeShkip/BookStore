@@ -45,14 +45,14 @@ h2 {
     transition: opacity 0.3s;
 }
 
-.photo:hover .overlay {
-    opacity: 1;
-    text-align: center;
-}
-
 .author_section:hover {
     box-shadow: 0 0 7px #254c69cc;
     background-color: #254c693c;
+
+    .photo .overlay {
+        opacity: 1;
+        text-align: center;
+    }
 }
 
 .authors_page {

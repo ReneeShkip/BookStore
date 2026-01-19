@@ -110,10 +110,6 @@ export default function BookDetails() {
             </p>
         );
     }
-
-
-
-
     const limit = 2;
     const offset = 0;
 

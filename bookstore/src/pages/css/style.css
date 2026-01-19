@@ -1,3 +1,7 @@
+html {
+    scroll-behavior: smooth;
+}
+
 .menu_container {
     display: flex;
     justify-content: space-evenly;
@@ -48,6 +52,10 @@
     justify-content: center;
     font-size: 35px;
     gap: 100px;
+
+    a:hover {
+        color: #162f42;
+    }
 }
 
 .search-wrapper {
@@ -198,5 +206,15 @@
     margin-top: 4px;
     background-color: #477B91;
     color: #ECE4C0;
+}
 
+.top {
+    position: fixed;
+    width: 3%;
+    bottom: 90px;
+    left: 55px;
+
+    img {
+        width: 100%;
+    }
 }

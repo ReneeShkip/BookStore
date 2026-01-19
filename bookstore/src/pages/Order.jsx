@@ -21,6 +21,7 @@ export default function Order() {
     const { state } = useLocation();
     const [chosen, setChosen] = useState(state?.items || [])
     const [deps, setDep] = useState(null)
+    const user_id = user?.id;
 
     const handleSelectCity = (option) => {
         setCity(option.Description);
@@ -62,7 +63,7 @@ export default function Order() {
         let date_and_time = new Date().toISOString()
         const cart_ids = chosen.map(item => item.id);
 
-        if (!date_and_time || !deliveryType || !deps || !cart_ids) {
+        if (!date_and_time || !deliveryType || !deps || !cart_ids || !user_id) {
             console.log("deps: " + deps)
         }
         try {
@@ -73,7 +74,8 @@ export default function Order() {
                     date_and_time,
                     posta_id: deliveryType,
                     post_address: deps,
-                    cart_ids
+                    cart_ids,
+                    user_id
                 })
             });
 

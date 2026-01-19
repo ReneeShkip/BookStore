@@ -8,6 +8,7 @@ export const normalizedOStatuses = (rows) => {
             users[r.user_id] = {
                 id: r.user_id,
                 userer: r.userer,
+                isActive: r.isActive,
                 orders: {}
             };
         }
@@ -25,7 +26,7 @@ export const normalizedOStatuses = (rows) => {
             book_id: r.cart_id,
             title: r.title,
             author: r.author,
-            price: r.price,
+            price: r.price * r.quantity,
             type: r.type,
             quantity: r.quantity
         });

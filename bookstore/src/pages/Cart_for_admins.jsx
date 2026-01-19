@@ -83,18 +83,17 @@ export default function Cart_for_admins() {
 
             <div className="admin-cart__list">
                 {usersWithOrdersTotal.map(user => (
-                    <div key={user.id} className="item">
-
+                    <div key={user.id} className={`item ${user.isActive === "F" && `deleted`}`}>
                         <div className="order-date">
-                            <h3>{user.userer}</h3>
+                            <h3 className="user_name">{user.userer}</h3>
+                            {user.isActive === "F" && <h3> Видалений</h3>}
                         </div>
-
                         {user.orders.map(order => (
                             <div key={order.id} className="order">
                                 <div className="main_order">
                                     <div>
                                         <p>№{order.id}</p>
-                                        <select name="status" id={`status_${order.id}`}
+                                        <select name="status" disabled={user.isActive === "F"} id={`status_${order.id}`}
                                             onChange={e => setStat(user.id, order.id, e.target.value)}
                                             value={order.status}
                                         >
