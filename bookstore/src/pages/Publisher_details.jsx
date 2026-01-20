@@ -1,28 +1,25 @@
-import { useParams } from "react-router-dom";
-import React, { useEffect, useState } from "react";
-import { normalizeAurhor } from "../utils/normalizedauthors";
-import { NavLink } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { normalizePublisher } from "../utils/normalizedpublisher";
+import { useParams, NavLink, useNavigate } from "react-router-dom";
 import Loading from "./Loading";
-import "../pages/css/details.css";
 
-export default function AuthorDetails() {
-    const { id } = useParams();
-    const [author, setAuthor] = useState(null);
+export default function Publisher_Details() {
+    const [publisher, setPublisher] = useState(null);
     const [loading, setLoading] = useState(true);
-
+    const { id } = useParams();
     useEffect(() => {
         if (!id) return;
 
         const fetchData = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/authors_books?authorId=${id}`);
+                const res = await fetch(`http://localhost:5000/authors_books?PublisherId=${id}`);
                 if (!res.ok) throw new Error("Failed to fetch books");
                 const data = await res.json();
 
                 if (data.length > 0) {
-                    setAuthor(normalizeAurhor(data));
+                    setPublisher(normalizePublisher(data));
                 } else {
-                    if (!authorRes.ok) throw new Error("Failed to fetch author");
+                    if (!res.ok) throw new Error("Failed to fetch author");
                 }
             } catch (err) {
                 console.error(err);
@@ -34,27 +31,17 @@ export default function AuthorDetails() {
         fetchData();
     }, [id]);
 
-    if (loading) return <Loading />;
-    if (!author) return <h2>Author not found</h2>;
+    if (!publisher || loading) return <Loading />;
     return (
         <div className="author-details">
-            <img src={`/img/authors/${author.photo}`} alt="" />
+            <img src={`/img/publishers/${publisher.logo}`} alt="" />
             <div className="info">
-                <h1>{author.first_name} {author.last_name}</h1>
-                <p>{author.biography}</p>
-                {author.books.length > 0 && (
+                <h1>{publisher.name}</h1>
+                {publisher.books.length > 0 && (
                     <div className="books">
-                        <div className="soc">
-                            <div>Соц. мережі</div>
-                            {author.links === "Відсутні" ? author.links :
-                                <a href={author.links} className="au_short_info link">
-
-                                    {author.links.includes("tiktok") ? "tiktok" : "instagram"}
-                                </a>}
-                        </div>
                         <h2>Твори цього автора</h2>
                         <ul className="listbook">
-                            {author.books.map(book => (
+                            {publisher.books.map(book => (
                                 <li className="option_book" key={book.id}>
                                     <div className="au_short_info">{book.title}</div>
                                     <div className="au_short_info" key={0}>

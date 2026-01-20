@@ -60,6 +60,7 @@ export default function Order() {
     }
 
     const order = async () => {
+        alert("А ви певні?")
         let date_and_time = new Date().toISOString()
         const cart_ids = chosen.map(item => item.id);
 

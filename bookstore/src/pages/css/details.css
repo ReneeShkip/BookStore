@@ -104,6 +104,8 @@ p {
 }
 
 .au_short_info {
+    display: flex;
+    gap: 10%;
     color: black;
 }
 
@@ -222,7 +224,7 @@ p {
     list-style: none;
 }
 
-.top {
+.top_coms {
     font-size: 35px;
     color: #254C69;
     list-style: none;

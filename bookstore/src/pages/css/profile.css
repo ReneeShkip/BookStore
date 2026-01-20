@@ -107,7 +107,11 @@
     }
 }
 
-.admin-cart__list {
+.admin_cart {
+    margin-bottom: 35px;
+}
+
+.admin_cart__list {
 
     p,
     h3 {

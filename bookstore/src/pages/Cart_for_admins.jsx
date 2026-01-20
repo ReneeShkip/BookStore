@@ -78,10 +78,10 @@ export default function Cart_for_admins() {
 
 
     return (
-        <div className="admin-cart">
+        <div className="admin_cart">
             <h1>Поточні замовлення</h1>
 
-            <div className="admin-cart__list">
+            <div className="admin_cart__list">
                 {usersWithOrdersTotal.map(user => (
                     <div key={user.id} className={`item ${user.isActive === "F" && `deleted`}`}>
                         <div className="order-date">

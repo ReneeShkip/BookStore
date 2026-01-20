@@ -13,6 +13,7 @@ import Order from "./pages/Order.jsx";
 import Cart from "./pages/Cart.jsx";
 import Returner from "./pages/Returner.jsx";
 import Cart_for_admins from "./pages/Cart_for_admins.jsx";
+import Publisher_Details from "./pages/Publisher_details.jsx";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,7 @@ const router = createBrowserRouter([
       { path: "book/details/:id", element: <BookDetails /> },
       { path: "/books/filteredbooks/:category?", element: <SetBooks /> },
       { path: "/profile", element: <MyProfile /> },
+      { path: "/publisher/details/:id", element: <Publisher_Details /> },
       { path: "/cart", element: <Cart /> },
       { path: "/order", element: <Order /> },
       { path: "/admin/cart", element: <Cart_for_admins /> },

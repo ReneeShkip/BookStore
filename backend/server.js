@@ -188,7 +188,7 @@ app.get("/publishers", (req, res) => {
 });
 
 app.get("/authors_books", (req, res) => {
-    const { book_id, authorId, limit = 20, offset = 0 } = req.query;
+    const { book_id, authorId, PublisherId, limit = 20, offset = 0 } = req.query;
 
     let query = `
         SELECT DISTINCT
@@ -196,6 +196,8 @@ app.get("/authors_books", (req, res) => {
             b.id AS book_id,
             b.title,
             p.name AS publisher,
+            p.id as publisher_id,
+            p.photo as logo,
             bt.type_id,
             t.type,
             bt.price,
@@ -208,7 +210,7 @@ app.get("/authors_books", (req, res) => {
             a.last_name,
             a.biography,
             a.photo,
-            a.links,
+            a.links,            
             l.name as lang
         FROM book_type bt
         JOIN books b ON b.id = bt.book_id
@@ -230,6 +232,11 @@ app.get("/authors_books", (req, res) => {
         conditions.push("a.id = ?");
         params.push(authorId);
     }
+    if (PublisherId) {
+        conditions.push("p.id = ?");
+        params.push(PublisherId);
+    }
+
     if (conditions.length > 0) {
         query += " WHERE " + conditions.join(" AND ");
     }

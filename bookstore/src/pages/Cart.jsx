@@ -2,10 +2,12 @@ import { useContext, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { CartContext } from "../context/CartContext";
+import Alert from "../components/alert";
 import Loading from "./Loading.jsx";
 import './css/cart.css';
 
 function Cart() {
+    const [showAlert, setShowAlert] = useState(false);
     const { isAuth } = useContext(UserContext);
     const {
         cart,
@@ -17,6 +19,23 @@ function Cart() {
     } = useContext(CartContext);
 
     const [chosen, setChosen] = useState([]);
+    const [itemToDelete, setItemToDelete] = useState(null);
+    const [theText, setText] = useState("");
+    const [justOne, setOne] = useState(false);
+
+    const confirmDeleteOne = () => {
+        removeItem(itemToDelete);
+        setShowAlert(false);
+    };
+
+    const confirmDeleteAll = () => {
+        removeAll();
+        setShowAlert(false);
+    };
+
+    const cancelDelete = () => {
+        setShowAlert(false);
+    };
 
     useEffect(() => {
         setChosen(prev =>
@@ -53,6 +72,11 @@ function Cart() {
     return (
 
         <div className="cart_page">
+            {showAlert && <Alert
+                text={theText}
+                onConfirm={justOne ? confirmDeleteOne : confirmDeleteAll}
+                onCancel={cancelDelete}
+            />}
             <div className="cart-section">
                 <div style={{ width: "100%" }}>
                     <div className="add_btns">
@@ -76,7 +100,11 @@ function Cart() {
                                     : "Обрати всі"}
                             </div>
                         </label>
-                        <button onClick={removeAll}>
+                        <button onClick={() => {
+                            setText(`Ви впевнені, що хочете очистити весь кошик?`)
+                            setShowAlert(true)
+                            setOne(false)
+                        }}>
                             Видалити всі <img src="/svg/close.svg" alt="delete" />
                         </button>
                     </div>
@@ -125,11 +153,7 @@ function Cart() {
                                                     const value = Math.max(1, Number(e.target.value));
 
                                                     setCart(prev =>
-                                                        prev.map(i =>
-                                                            i.id === item.id
-                                                                ? { ...i, quantity: value }
-                                                                : i
-                                                        )
+                                                        prev.map(i => i.id === item.id ? { ...i, quantity: value } : i)
                                                     );
                                                 }}
                                                 onBlur={() => {
@@ -141,7 +165,12 @@ function Cart() {
                                             {item.price * item.quantity} грн
                                         </div>
                                         <button
-                                            onClick={() => removeItem(item.id)}
+                                            onClick={() => {
+                                                setText(`Ви впевнені, що хочете видалити книгу зі свого кошику?`)
+                                                setShowAlert(true)
+                                                setOne(true)
+                                                setItemToDelete(item.id)
+                                            }}
                                             className="remove-btn"
                                         >
                                             <img src="/svg/close.svg" alt="delete" />

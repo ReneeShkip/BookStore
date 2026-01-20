@@ -66,7 +66,7 @@ export default function MyProfile() {
     const deleteIt = async () => {
 
         if (!user_id) return;
-
+        alert("А ви певні?")
         try {
             const res = await fetch("http://localhost:5000/del_ac", {
                 method: "POST",

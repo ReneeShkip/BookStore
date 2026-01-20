@@ -213,6 +213,7 @@ html {
     width: 3%;
     bottom: 90px;
     left: 55px;
+    z-index: 1000;
 
     img {
         width: 100%;

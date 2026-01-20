@@ -275,7 +275,7 @@ export default function BookDetails() {
                             {coments.map((c, index) => {
                                 const formatted = new Date(c.date_post).toLocaleDateString("uk-UA");
                                 return (
-                                    <li className="top" key={`${c.id}_${index}`}>
+                                    <li className="top_coms" key={`${c.id}_${index}`}>
                                         <div className="comentator">
                                             <div className="com_log">{c.login}</div>
                                             {stars.map((star) => (

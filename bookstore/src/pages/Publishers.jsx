@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "../pages/css/publisher.css"
+import { NavLink } from "react-router-dom";
 import Loading from "./Loading";
 
 
@@ -36,10 +37,11 @@ export default function Publishers() {
             <div className="publishers_page">
                 {publ.map((item) => (
                     <div className="logotype" key={item.ID}>
-                        <img
-                            src={`/img/publishers/${item.photo}`}
-                            alt={item.name}
-                        />
+                        <NavLink to={`/publisher/details/${item.ID}`}>
+                            <img
+                                src={`/img/publishers/${item.photo}`}
+                                alt={item.name}
+                            /></NavLink>
                         <div className="overlay"></div>
                     </div>
 
