@@ -28,12 +28,12 @@
 }
 
 .prof {
-    width: 45%;
+    min-width: 45%;
     display: flex;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 30px;
+    font-size: 200%;
     color: #9ABDA2;
     position: relative;
 }
@@ -45,9 +45,9 @@
 }
 
 .profile_info {
-    width: 52vw;
+    width: 60vw;
     display: flex;
-    height: 220px;
+    height: 35vh;
     justify-content: space-evenly;
     align-content: space-around;
     padding: 10px 0;
@@ -64,7 +64,6 @@
         border: none;
         font-weight: 600;
         color: #ECE4C0;
-        font-size: 16px;
         border: none;
         outline: none;
     }

@@ -6,14 +6,13 @@ html {
     display: flex;
     justify-content: space-evenly;
     width: 50%;
-    margin-right: 100px;
+    height: 4vh;
+    margin-right: 4%;
 
     button {
-        width: 100px;
-    }
-
-    img {
-        height: 30px;
+        margin-left: 3%;
+        height: 100%;
+        padding: 0;
     }
 }
 
@@ -23,7 +22,12 @@ html {
     display: flex;
     align-items: center;
     gap: 30px;
-    margin-left: 100px;
+    margin-left: 5%;
+
+    a {
+        height: 100%;
+        align-items: center;
+    }
 
     h1 {
         margin: 0;
@@ -47,11 +51,11 @@ html {
 
 .post_menu {
     background-color: #477B91;
-    width: 1980px;
+    width: 100%;
     display: flex;
     justify-content: center;
     font-size: 35px;
-    gap: 100px;
+    gap: 10%;
 
     a:hover {
         color: #162f42;
@@ -62,7 +66,7 @@ html {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    width: 800px;
+    width: 90%;
 }
 
 .search-toggle {
@@ -71,7 +75,6 @@ html {
     cursor: pointer;
     z-index: 2;
     flex-shrink: 0;
-    width: 70px !important;
 }
 
 .search-box {
@@ -114,7 +117,6 @@ html {
     margin-left: 5px;
     flex-shrink: 0;
     height: auto;
-    width: 50px !important;
     font-size: 50px;
 }
 

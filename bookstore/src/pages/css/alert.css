@@ -15,6 +15,10 @@
     }
 }
 
+.just_info {
+    width: 100% !important;
+}
+
 .al_overlay {
     width: 100vw;
     height: 100vh;

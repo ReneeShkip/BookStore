@@ -201,7 +201,7 @@ export default function Header() {
                     onClick={toggleMenu}
                 >
                     {isAuth ? (
-                        <img src="/img/users/admin.png" alt="admin" />
+                        <img src="/img/users/admin.svg" alt="admin" />
                     ) : (
                         <img src="/svg/profile.svg" alt="profile" />
                     )}

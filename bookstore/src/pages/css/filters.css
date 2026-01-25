@@ -78,6 +78,10 @@
     cursor: pointer;
 }
 
+.button_item {
+    width: auto;
+}
+
 .genres_item {
     width: auto;
 }

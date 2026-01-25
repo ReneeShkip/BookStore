@@ -8,8 +8,10 @@ export default function Alert({ text, onConfirm, onCancel }) {
                     <h1>Увага</h1>
                     <h4>{text}</h4>
                     <div className="al_btns">
-                        <button onClick={onCancel}>Скасувати</button>
-                        <button className="ok_btn" onClick={onConfirm}>ОК</button>
+                        {onConfirm &&
+                            <button onClick={onCancel}>Скасувати</button>
+                        }
+                        <button className={`ok_btn ${!onConfirm ? "just_info" : ""}`} onClick={onConfirm ?? onCancel}>ОК</button>
                     </div>
                 </div>
             </div>

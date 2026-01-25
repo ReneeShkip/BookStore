@@ -1,6 +1,7 @@
 import { useContext, useState, useEffect } from "react";
 import Loading from "./Loading.jsx";
-import { normalizeHistory } from "../utils/normalizedhistory";
+import { normalizeHistory } from "../utils/normalizedhistory"
+import Alert from "../components/alert";;
 import { UserContext } from "../context/UserContext";
 import './css/profile.css';
 import CitySelector from "../components/city_selector.jsx";
@@ -30,8 +31,15 @@ export default function MyProfile() {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [showAlert, setShowAlert] = useState(false);
     const [cityRef, setCityRef] = useState(null);
+    const [theText, setText] = useState("");
+    const [func, setFunc] = useState(null);
     const user_id = user?.id;
+
+    const cancel = () => {
+        setShowAlert(false);
+    };
 
     const handleSelectCity = (option) => {
         setCity(option.Description);
@@ -66,7 +74,7 @@ export default function MyProfile() {
     const deleteIt = async () => {
 
         if (!user_id) return;
-        alert("А ви певні?")
+
         try {
             const res = await fetch("http://localhost:5000/del_ac", {
                 method: "POST",
@@ -99,6 +107,11 @@ export default function MyProfile() {
 
     return (
         <div className="profil-page">
+            {showAlert && <Alert
+                text={theText}
+                onConfirm={func}
+                onCancel={cancel}
+            />}
             <div className="profile_info_section">
                 <h1>Особиста інформація</h1>
                 <div className="profile_info">
@@ -130,15 +143,25 @@ export default function MyProfile() {
                                     await editInfo(updatedUser);
                                     setUser(updatedUser);
                                     localStorage.setItem('user', JSON.stringify(updatedUser));
-                                    alert("Дані оновлено");
+                                    setText("Дані успішно оновлено");
+                                    setFunc(() => null)
+                                    setShowAlert(true);
                                 } catch (e) {
                                     setError(e.message);
-                                    alert("Помилка: " + e.message);
+                                    setText("Помилка: " + e.message);
+                                    setFunc(() => null)
+                                    setShowAlert(true);
                                 }
                             }}>
                                 Змінити
                             </button></div>
-                            <button className="deleter" onClick={deleteIt}>Видалити обліковий запис</button>
+                            <button className="deleter" onClick={
+                                () => {
+                                    setText("Ви певні, що хочете видалити акаунт?")
+                                    setShowAlert(true)
+                                    setFunc(() => deleteIt)
+                                }
+                            }>Видалити обліковий запис</button>
                         </div>
                     }
                 </div>

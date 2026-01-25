@@ -9,28 +9,42 @@ export default function BooksList({ category, categoryName }) {
     const [page, setPage] = useState(0);
     const [error, setError] = useState(null);
     const [hasNextPage, setHasNextPage] = useState(true);
-    let pageSize = 6;
-    if (page === 3) { pageSize = 5 }
+    const [pageSize, setPageSize] = useState(getPageSize());
+    function getPageSize() {
+        const width = window.innerWidth;
+        let p = 7
+        if (width < 1200) p = 5;
+        if (width < 940) p = 4;
+        if (width < 570) p = 2;
+        if (page === 2) p--;
+        console.log(p, page);
+        return p;
+    }
+
 
     useEffect(() => {
-        fetch(`http://localhost:5000/books?category=${category}&limit=${pageSize + 1}&offset=${page * pageSize}`)
+        const onResize = () => {
+            setPageSize(getPageSize());
+        };
+
+        window.addEventListener("resize", onResize);
+        return () => window.removeEventListener("resize", onResize);
+    }, []);
+
+    useEffect(() => {
+        setPageSize(getPageSize());
+        fetch(
+            `http://localhost:5000/books?category=${category}&limit=${pageSize}&offset=${page * pageSize}`
+        )
             .then(res => {
-                if (res.status === 404) {
-                    return <NotFound />
-                }
-                if (!res.ok) {
-                    throw new Error("Server error");
-                }
+                if (!res.ok) throw new Error("Server error");
                 return res.json();
             })
             .then(data => {
-                if (data) {
-                    setBooks(data);
-                    setHasNextPage((data.length > pageSize) && (page < 3));
-                    console.log(page, hasNextPage)
-                }
+                setBooks(data.slice(0, pageSize));
+                setHasNextPage(data.length > pageSize - 1 && page < 2);
             })
-            .catch(err => console.error(err));
+            .catch(console.error);
     }, [page, category, pageSize]);
 
     useEffect(() => {
@@ -89,7 +103,7 @@ export default function BooksList({ category, categoryName }) {
                                     </NavLink>
                                 </li>
                             ))}
-                            {(books.length < 7 || page === 3) && (
+                            {(!hasNextPage) && (
                                 <NavLink to={`/books/filteredbooks/${category}`} className="show-more">
                                     Ще
                                 </NavLink>
