@@ -4,29 +4,8 @@ const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2");
 const { use } = require("react");
-
+const bcrypt = require("bcrypt");
 const app = express();
-
-/*const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    },
-    tls: {
-        rejectUnauthorized: false
-    }
-});
-
-transporter.verify((error, success) => {
-    if (error) {
-        console.log('❌ Email connection error:', error);
-    } else {
-        console.log('✅ Email server is ready');
-    }
-});*/
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -254,9 +233,11 @@ app.get("/authors_books", (req, res) => {
 
 app.post("/log_in", (req, res) => {
     const { login, password } = req.body;
-
     db.query(
-        `SELECT id, login, first_name, last_name, phone_number, password, role, email, city FROM users WHERE login = ? and isActive = "T" LIMIT 1`,
+        `SELECT id, login, first_name, last_name, phone_number, password, role, email, city
+         FROM users
+         WHERE login = ? AND isActive = "T"
+         LIMIT 1`,
         [login],
         async (err, results) => {
             if (err) return res.status(500).send("Server error");
@@ -264,9 +245,11 @@ app.post("/log_in", (req, res) => {
                 return res.status(401).json({ error: "Невірний логін або пароль" });
             }
             const user = results[0];
-            if (password != user.password) {
+            const isValid = await bcrypt.compare(password, user.password);
+            if (!isValid) {
                 return res.status(401).json({ error: "Невірний логін або пароль" });
             }
+
             res.json({
                 id: user.id,
                 login: user.login,
@@ -288,23 +271,35 @@ app.post("/sign_up", async (req, res) => {
         return res.status(400).json({ error: "Login or password missing" });
     }
 
-    const query = `INSERT INTO users(first_name, last_name, login, password, phone_number, role) VALUES(?, ?, ?, ?, ?, ?)`;
+    try {
+        const passwordHash = await bcrypt.hash(password, 12);
 
-    db.query(query, [first_name, last_name, login, password, phone_number, role], (err, results) => {
-        if (err) {
-            return res.status(500).json({ error: "Server error", details: err.message });
-        }
+        const query = `
+            INSERT INTO users(first_name, last_name, login, password, phone_number, role)
+            VALUES(?, ?, ?, ?, ?, ?)
+        `;
 
-        res.json({
-            message: "User registered successfully",
-            login,
-            id: results.insertId,
-            first_name,
-            last_name,
-            phone_number,
-            role
-        });
-    });
+        db.query(
+            query,
+            [first_name, last_name, login, passwordHash, phone_number, role],
+            (err, results) => {
+                if (err) {
+                    return res.status(500).json({ error: "Server error", details: err.message });
+                }
+
+                res.json({
+                    id: results.insertId,
+                    login,
+                    first_name,
+                    last_name,
+                    phone_number,
+                    role
+                });
+            }
+        );
+    } catch (err) {
+        res.status(500).json({ error: "Password hashing failed" });
+    }
 });
 
 app.get("/filteredbooks", (req, res) => {

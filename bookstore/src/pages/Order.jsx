@@ -3,6 +3,7 @@ import { useLocation, useNavigate, NavLink } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import Loading from "../pages/Loading"
 import CitySelector from "../components/city_selector";
+import Alert from "../components/alert";
 
 export default function Order() {
     const navigate = useNavigate();
@@ -21,7 +22,14 @@ export default function Order() {
     const { state } = useLocation();
     const [chosen, setChosen] = useState(state?.items || [])
     const [deps, setDep] = useState(null)
+    const [theText, setText] = useState("");
+    const [showAlert, setShowAlert] = useState(false);
     const user_id = user?.id;
+
+    const cancel = () => {
+        setShowAlert(false);
+    };
+
 
     const handleSelectCity = (option) => {
         setCity(option.Description);
@@ -60,7 +68,6 @@ export default function Order() {
     }
 
     const order = async () => {
-        alert("А ви певні?")
         let date_and_time = new Date().toISOString()
         const cart_ids = chosen.map(item => item.id);
 
@@ -145,11 +152,16 @@ export default function Order() {
     }, { totalSum: 0, totalCount: 0 });
 
     if (chosen.length === 0) {
-        return <div>Немає товарів для оформлення</div>;
+        return <h2>Немає товарів для оформлення</h2>;
     }
 
     return (
         <div className="order-page">
+            {showAlert && <Alert
+                text={theText}
+                onConfirm={order}
+                onCancel={cancel}
+            />}
             <div className="info">
                 <h1>Контактні дані</h1>
                 <div className="profile_info">
@@ -197,13 +209,17 @@ export default function Order() {
                     </div>
                     <div className="total-price">
                         <NavLink to="/cart">Скасувати</NavLink>
-                        <button className="roder" onClick={order}>Оформити замовлення</button>
+                        <button className="roder" onClick={() => {
+                            setText("Підтвердіть оформлення замовлення")
+                            setShowAlert(true)
+                        }
+                        }>Оформити замовлення</button>
                     </div>
                 </div>
             </div>
             <div style={{ width: "30%" }}>
                 {chosen.map(ch => (
-                    <div className="book_card">
+                    <div className="book_card" key={`book_${ch.id}`}>
                         <div key={`book_${ch.title}`} className="books-section">
                             <h2>{ch.title}</h2>
                             <div className="sub_book_info">

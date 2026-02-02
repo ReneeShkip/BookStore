@@ -188,7 +188,7 @@ export default function Header() {
 
                     <NavLink to={user?.role === "admin" ? "/admin/cart" : "/cart"} className="cart-link">
                         <img src="/svg/cart.svg" alt="cart" />
-                        {cartItemsCount > 0 && (
+                        {user?.role != "admin" && cartItemsCount > 0 && (
                             <span className="cart-badge">{cartItemsCount}</span>
                         )}
                     </NavLink>

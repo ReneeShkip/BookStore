@@ -51,6 +51,7 @@ export default function Loger({ onLogin, authError, onClose, mode, onRegister })
     const handleRegist = (e) => {
         e.preventDefault();
         onRegister({ login, first_name, last_name, password, phone_number, role, email, city });
+        setClose(true);
     };
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -58,6 +59,7 @@ export default function Loger({ onLogin, authError, onClose, mode, onRegister })
         if (!validate()) return;
 
         onLogin(form);
+        setClose(true);
     };
 
     useEffect(() => {

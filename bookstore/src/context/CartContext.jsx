@@ -30,12 +30,7 @@ export function CartProvider({ children }) {
         fetchCart();
     }, [isAuth, user?.id]);
 
-
     const addToCart = async (bookType, quantity = 1) => {
-        if (!user?.id) {
-            alert("Увійдіть у систему, щоб додати товар до кошика");
-            return;
-        }
 
         const body = {
             user_id: user.id,

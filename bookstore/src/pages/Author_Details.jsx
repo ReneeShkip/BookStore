@@ -10,6 +10,25 @@ export default function AuthorDetails() {
     const [author, setAuthor] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    function TextMore({ text }) {
+        const [expanded, setExpanded] = useState(false);
+        const lim = 200;
+        const isLong = text.length > lim;
+        const displaytext = expanded ? text : text.slice(0, lim);
+
+        return (
+            <p>
+                {displaytext}
+                {isLong && !expanded && "..."}
+                {isLong && (
+                    <button onClick={() => setExpanded(!expanded)} className="morebtn">
+                        {expanded ? "менше" : "більше"}
+                    </button>
+                )}
+            </p>
+        );
+    }
+
     useEffect(() => {
         if (!id) return;
 
@@ -41,7 +60,7 @@ export default function AuthorDetails() {
             <img src={`/img/authors/${author.photo}`} alt="" />
             <div className="info">
                 <h1>{author.first_name} {author.last_name}</h1>
-                <p>{author.biography}</p>
+                <TextMore text={author.biography} />
                 {author.books.length > 0 && (
                     <div className="books">
                         <div className="soc">

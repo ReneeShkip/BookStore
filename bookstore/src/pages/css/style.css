@@ -14,6 +14,17 @@ html {
         height: 100%;
         padding: 0;
     }
+
+    .personal-popup {
+        button {
+            margin: 0;
+        }
+    }
+
+    .button_item {
+        margin: 0;
+        padding: 6px 10px;
+    }
 }
 
 .logo {

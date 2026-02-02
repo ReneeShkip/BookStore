@@ -1,6 +1,7 @@
 import { useParams, NavLink, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import "../pages/css/details.css";
+import Alert from "../components/alert";
 import { normalizeBook } from "../utils/normalizebooks";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
@@ -18,7 +19,8 @@ export default function BookDetails() {
     const [errorMessage, setErrorMessage] = useState(null);
     const [Characters, setCharacterstsOpen] = useState(true);
     const [Coments, setCommentsOpen] = useState(false);
-
+    const [showAlert, setShowAlert] = useState(false);
+    const [theText, setText] = useState("");
     const [bookType, setBookTypeId] = useState(null);
     const [avType, setAvType] = useState(false);
     const [error, setError] = useState("");
@@ -35,10 +37,15 @@ export default function BookDetails() {
 
     const handleAddToCart = () => {
         if (!bookType) {
-            alert("Оберіть тип книги");
+            setText("Оберіть тип книги");
+            setShowAlert(true);
             return;
         }
-
+        if (!user) {
+            setText("Щоб купити книгу, увійдіть на сайт");
+            setShowAlert(true);
+            return;
+        }
         addToCart(bookType, 1);
     };
 
@@ -156,8 +163,17 @@ export default function BookDetails() {
         ? (total / coments.length).toFixed(1)
         : "5.0";
 
+    const cancel = () => {
+        setShowAlert(false);
+    };
+
     return (
         <div className="author-details">
+            {showAlert && <Alert
+                text={theText}
+                onConfirm={null}
+                onCancel={cancel}
+            />}
             <div className="book-container">
                 <img src={`/img/covers/${book.cover}`} alt={book.title} className="book_cover" />
                 <div className="for_stars">
@@ -185,18 +201,11 @@ export default function BookDetails() {
                 </div>
             </div>
             <ul className="types">
-
-                {!hasAvailabile ?
-                    <button
-                        className="buying"
-                    > Очікую</button>
-                    :
-                    <button
-                        className="buying"
-                        disabled={!bookType}
-                        onClick={handleAddToCart}
-                    >Купити</button>
-                }
+                <button
+                    className="buying"
+                    disabled={!bookType}
+                    onClick={handleAddToCart}
+                >Купити</button>
                 <div style={{ fontSize: "20px", color: "#68676a", margin: "0" }}>{!bookType && "Оберіть тип книги"}</div>
                 {book.types.map((t) => (
                     <li key={t.book_type_id} className="type_item">
